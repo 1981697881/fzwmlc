@@ -304,10 +304,13 @@ class _ExWarehouseDetailState extends State<ExWarehouseDetail> {
     var menuData = sharedPreferences.getString('MenuPermissions');
     var deptData = jsonDecode(menuData)[0];
     var scanCode = _code.split(",");
-    userMap['FilterString'] = "FMaterialId.FNumber='"+scanCode[0]+"' and FLot.FNumber='"+scanCode[1]+"' and FStockOrgId.FNumber = "+deptData[1];
+    userMap['FilterString'] = "FMaterialId.FNumber='"+scanCode[0]+"' and FStockOrgId.FNumber = "+deptData[1];
+    if(scanCode[1] != ""){
+      userMap['FilterString'] = "FMaterialId.FNumber='"+scanCode[0]+"' and FLot.FNumber='"+scanCode[1]+"' and FStockOrgId.FNumber = "+deptData[1];
+    }
     userMap['FormId'] = 'STK_Inventory';
     userMap['FieldKeys'] =
-    'FID,FMaterialName,FMaterialId.FNumber,FModel,FBaseUnitId.FName,FBaseUnitId.FNumber,FLot.FNumber,FQty,FStockId.FNumber,FStockName,FStockLocId,FStockId.FIsOpenLocation';
+    'FID,FMaterialName,FMaterialId.FNumber,FModel,FBaseUnitId.FName,FBaseUnitId.FNumber,FLot.FNumber,FQty,FStockId.FNumber,FStockName,FStockLocId,FStockId.FIsOpenLocation,FMaterialId.FIsBatchManage';
     Map<String, dynamic> dataMap = Map();
     dataMap['data'] = userMap;
     String order = await CurrencyEntity.polling(dataMap);
@@ -385,7 +388,7 @@ class _ExWarehouseDetailState extends State<ExWarehouseDetail> {
           arr.add({
             "title": "批号",
             "name": "FLot",
-            "isHide": false,
+            "isHide": value[12] != true,
             "value": {"label": value[6], "value": value[6]}
           });
           arr.add({

@@ -152,7 +152,7 @@ class _WarehousingPageState extends State<WarehousingPage> {
         });
         arr.add({
           "title": "生产序号",
-          "name": "f_wk_xh",
+          "name": "FProdOrder",
           "isHide": false,
           "value": {
             "label": value[1],/*value[18]*/
@@ -266,7 +266,7 @@ class _WarehousingPageState extends State<WarehousingPage> {
                             FEntryId: this.hobby[i][11]
                             ['value'],
                             FID: this.hobby[i][12]['value'],
-                            f_wk_xh: this.hobby[i][7]
+                            FProdOrder: this.hobby[i][7]
                             ['value'],
                               // 路由参数
                               );

@@ -941,7 +941,7 @@ class _ReturnGoodsDetailState extends State<ReturnGoodsDetail> {
       });
       if(FEntity.length==0){
         this.isSubmit = false;
-        ToastUtil.showInfo('请输入数量,仓库,线路名称');
+        ToastUtil.showInfo('请输入数量,仓库');
         return;
       }
       Model['FEntity'] = FEntity;
