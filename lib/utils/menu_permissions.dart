@@ -1,6 +1,5 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
-import 'package:fzwmlc/views/drawing/drawing_page.dart';
 import 'package:fzwmlc/views/index/index_page.dart';
 import 'package:fzwmlc/views/production/picking_detail.dart';
 import 'package:fzwmlc/views/production/picking_page.dart';

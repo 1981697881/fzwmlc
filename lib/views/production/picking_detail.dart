@@ -66,6 +66,7 @@ class _PickingDetailState extends State<PickingDetail> {
   var isScanWork = false;
   var checkData;
   var checkDataChild;
+  var fOrgID;
 
   var selectData = {
     DateMode.YMD: "",
@@ -113,8 +114,8 @@ class _PickingDetailState extends State<PickingDetail> {
           .receiveBroadcastStream()
           .listen(_onEvent, onError: _onError);
     }
-    getWorkShop();
-    getStockList();
+    /*getWorkShop();*/
+
   }
 
   void getWorkShop() async {
@@ -149,7 +150,10 @@ class _PickingDetailState extends State<PickingDetail> {
     SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
     var menuData = sharedPreferences.getString('MenuPermissions');
     var deptData = jsonDecode(menuData)[0];
-    userMap['FilterString'] = "FUseOrgId.FNumber ="+deptData[1];
+    if(fOrgID == null){
+      this.fOrgID = deptData[1];
+    }
+    userMap['FilterString'] = "FForbidStatus = 'A' and FUseOrgId.FNumber ="+fOrgID;
     Map<String, dynamic> dataMap = Map();
     dataMap['data'] = userMap;
     String res = await CurrencyEntity.polling(dataMap);
@@ -182,6 +186,7 @@ class _PickingDetailState extends State<PickingDetail> {
     if (orderDate.length > 0) {
       FStockOrgId = orderDate[0][1].toString();
       FPrdOrgId = orderDate[0][1].toString();
+      this.fOrgID = orderDate[0][1];
       orderDate.forEach((value) {
         List arr = [];
         arr.add({
@@ -226,11 +231,13 @@ class _PickingDetailState extends State<PickingDetail> {
         EasyLoading.dismiss();
         this._getHobby();
       });
+      getStockList();
     } else {
       setState(() {
         EasyLoading.dismiss();
         this._getHobby();
       });
+      getStockList();
       ToastUtil.showInfo('无数据');
     }
   }

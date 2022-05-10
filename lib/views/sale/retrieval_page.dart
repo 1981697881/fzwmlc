@@ -84,9 +84,8 @@ class _RetrievalPageState extends State<RetrievalPage> {
     }
     if (this.keyWord != '') {
       userMap['FilterString'] =
-          "FBillNo='"+scanCode[0]+"' and FCLOSESTATUS='A' and FRemainOutQty>0 and FDate>= '$startDate' and FDate <= '$endDate'";
+          "F_VBMY_Text='"+scanCode[0]+"' and FCLOSESTATUS='A' and FRemainOutQty>0 and FDate>= '$startDate' and FDate <= '$endDate'";
     }
-
     userMap['FormId'] = 'SAL_DELIVERYNOTICE';
     userMap['FieldKeys'] =
         'FBillNo,FSaleOrgId.FNumber,FSaleOrgId.FName,FDate,FEntity_FEntryId,FMaterialId.FNumber,FMaterialId.FName,FMaterialId.FSpecification,FDeliveryOrgID.FNumber,FDeliveryOrgID.FName,FUnitId.FNumber,FUnitId.FName,FQty,FDeliveryDate,FRemainOutQty,FID,,FCustomerID.FNumber,FCustomerID.FName';

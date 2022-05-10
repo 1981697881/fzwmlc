@@ -81,6 +81,7 @@ class _WarehousingDetailState extends State<WarehousingDetail> {
   var fid;
   var FProdOrder;
   var FBarcode;
+  var fOrgID;
   _WarehousingDetailState(fBillNo, FSeq, fEntryId, fid, FProdOrder,FBarcode) {
     this.FBillNo = fBillNo['value'];
     this.FSeq = FSeq['value'];
@@ -102,7 +103,7 @@ class _WarehousingDetailState extends State<WarehousingDetail> {
           .listen(_onEvent, onError: _onError);
     }
    /* getWorkShop();*/
-    getStockList();
+
   }
 //获取仓库
   getStockList() async {
@@ -112,7 +113,10 @@ class _WarehousingDetailState extends State<WarehousingDetail> {
     SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
     var menuData = sharedPreferences.getString('MenuPermissions');
     var deptData = jsonDecode(menuData)[0];
-    userMap['FilterString'] = "FUseOrgId.FNumber ="+deptData[1];
+    if(fOrgID == null){
+      this.fOrgID = deptData[1];
+    }
+    userMap['FilterString'] = "FForbidStatus = 'A' and FUseOrgId.FNumber ="+fOrgID;
     Map<String, dynamic> dataMap = Map();
     dataMap['data'] = userMap;
     String res = await CurrencyEntity.polling(dataMap);
@@ -167,6 +171,7 @@ class _WarehousingDetailState extends State<WarehousingDetail> {
         selectData[DateMode.YMDHMS] = orderDate[0][3].substring(0, 10);
         FSaleOrderNo = orderDate[0][4];
         globalKey.currentState.update();
+        this.fOrgID = orderDate[0][1];
         /*FBillNoKey.currentState.onPressed(orderDate[0][0]);
     FSaleOrderNoKey.currentState.onPressed(orderDate[0][4]);*/
         hobby = [];
@@ -219,11 +224,13 @@ class _WarehousingDetailState extends State<WarehousingDetail> {
           EasyLoading.dismiss();
           this._getHobby();
         });
+        getStockList();
       } else {
         setState(() {
           EasyLoading.dismiss();
           this._getHobby();
         });
+        getStockList();
         ToastUtil.showInfo('无数据');
       }
     } else {
