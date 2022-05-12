@@ -451,8 +451,8 @@ class _ReturnGoodsDetailState extends State<ReturnGoodsDetail> {
             "name": "FLot",
             "isHide": value[6] != true,
             "value": {
-              "label": value[6] ? scanCode[1] : '',
-              "value": value[6] ? scanCode[1] : ''
+              "label": value[6]?(scanCode.length>1?scanCode[1]:''):'',
+              "value": value[6]?(scanCode.length>1?scanCode[1]:''):''
             }
           });
           arr.add({
