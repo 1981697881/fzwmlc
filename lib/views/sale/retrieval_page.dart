@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:math';
+import 'dart:ui';
 import 'package:fzwmlc/model/currency_entity.dart';
 import 'package:fzwmlc/utils/toast_util.dart';
 import 'package:flutter/material.dart';
@@ -42,21 +43,26 @@ class _RetrievalPageState extends State<RetrievalPage> {
     super.initState();
     DateTime dateTime = DateTime.now().add(Duration(days: -1));
     DateTime newDate = DateTime.now();
-    _dateSelectText = "${dateTime.year}-${dateTime.month.toString().padLeft(2,'0')}-${dateTime.day.toString().padLeft(2,'0')} 00:00:00.000 - ${newDate.year}-${newDate.month.toString().padLeft(2,'0')}-${newDate.day.toString().padLeft(2,'0')} 00:00:00.000";
+    _dateSelectText =
+        "${dateTime.year}-${dateTime.month.toString().padLeft(2, '0')}-${dateTime.day.toString().padLeft(2, '0')} 00:00:00.000 - ${newDate.year}-${newDate.month.toString().padLeft(2, '0')}-${newDate.day.toString().padLeft(2, '0')} 00:00:00.000";
+
     /// 开启监听
-     if (_subscription == null) {
+    if (_subscription == null) {
       _subscription = scannerPlugin
           .receiveBroadcastStream()
           .listen(_onEvent, onError: _onError);
     }
   }
+
   _initState() {
     this.getOrderList();
+
     /// 开启监听
     _subscription = scannerPlugin
         .receiveBroadcastStream()
         .listen(_onEvent, onError: _onError);
   }
+
   @override
   void dispose() {
     this.controller.dispose();
@@ -83,8 +89,9 @@ class _RetrievalPageState extends State<RetrievalPage> {
           "FRemainOutQty>0 and FCLOSESTATUS='A' and FDate>= '$startDate' and FDate <= '$endDate'";
     }
     if (this.keyWord != '') {
-      userMap['FilterString'] =
-          "F_VBMY_Text='"+scanCode[0]+"' and FCLOSESTATUS='A' and FRemainOutQty>0 and FDate>= '$startDate' and FDate <= '$endDate'";
+      userMap['FilterString'] = "F_VBMY_Text='" +
+          scanCode[0] +
+          "' and FCLOSESTATUS='A' and FRemainOutQty>0 and FDate>= '$startDate' and FDate <= '$endDate'";
     }
     userMap['FormId'] = 'SAL_DELIVERYNOTICE';
     userMap['FieldKeys'] =
@@ -214,14 +221,12 @@ class _RetrievalPageState extends State<RetrievalPage> {
                       ),
                     ).then((data) {
                       //延时500毫秒执行
-                      Future.delayed(
-                          const Duration(milliseconds: 500),
-                              () {
-                            setState(() {
-                              //延时更新状态
-                              this.getOrderList();
-                            });
-                          });
+                      Future.delayed(const Duration(milliseconds: 500), () {
+                        setState(() {
+                          //延时更新状态
+                          this.getOrderList();
+                        });
+                      });
                     });
                   },
                   title: Text(this.hobby[i][j]["title"] +
@@ -270,18 +275,18 @@ class _RetrievalPageState extends State<RetrievalPage> {
   void showDateSelect() async {
     //获取当前的时间
     DateTime now = DateTime.now();
-    DateTime start = DateTime(now.year, now.month, now.day-1);
+    DateTime start = DateTime(now.year, now.month, now.day - 1);
     //在当前的时间上多添加4天
     DateTime end = DateTime(start.year, start.month, start.day);
     //显示时间选择器
     DateTimeRange selectTimeRange = await showDateRangePicker(
-      //语言环境
+        //语言环境
         locale: Locale("zh", "CH"),
         context: context,
         //开始时间
-        firstDate: DateTime(now.year-3, now.month),
+        firstDate: DateTime(now.year - 3, now.month),
         //结束时间
-        lastDate: DateTime(now.year, now.month+1),
+        lastDate: DateTime(now.year, now.month + 1),
         cancelText: "取消",
         confirmText: "确定",
         //初始的时间范围选择
@@ -293,9 +298,11 @@ class _RetrievalPageState extends State<RetrievalPage> {
     //选择结果中的结束时间
     DateTime selectEnd = selectTimeRange.end;
     print(_dateSelectText);
-    setState(() {
+    setState(() {});
+  }
 
-    });
+  double hc_ScreenWidth() {
+    return window.physicalSize.width / window.devicePixelRatio;
   }
 
   @override
@@ -344,7 +351,7 @@ class _RetrievalPageState extends State<RetrievalPage> {
                                       height: 40.0,
                                       alignment: Alignment.centerLeft,
                                       child: Text(
-                                          "开始：" +
+                                          "开始:" +
                                               (this._dateSelectText == ""
                                                   ? ""
                                                   : this
@@ -362,7 +369,7 @@ class _RetrievalPageState extends State<RetrievalPage> {
                                       height: 40.0,
                                       alignment: Alignment.centerLeft,
                                       child: Text(
-                                          "结束：" +
+                                          "结束:" +
                                               (this._dateSelectText == ""
                                                   ? ""
                                                   : this
@@ -379,52 +386,71 @@ class _RetrievalPageState extends State<RetrievalPage> {
                           Container(
                             height: 52.0,
                             child: new Padding(
-                                padding: const EdgeInsets.all(2.0),
-                                child: new Card(
+                              padding: const EdgeInsets.all(2.0),
+                              child: Row(children: [
+                                Card(
                                   child: new Container(
+                                      width: hc_ScreenWidth() - 80,
                                       child: Row(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.center,
-                                    children: <Widget>[
-                                      SizedBox(
-                                        width: 6.0,
-                                      ),
-                                      Icon(
-                                        Icons.search,
-                                        color: Colors.grey,
-                                      ),
-                                      Expanded(
-                                        child: Container(
-                                          alignment: Alignment.center,
-                                          child: TextField(
-                                            controller: this.controller,
-                                            decoration: new InputDecoration(
-                                                contentPadding: EdgeInsets.only(
-                                                    bottom: 12.0),
-                                                hintText: '输入关键字',
-                                                border: InputBorder.none),
-                                            onSubmitted: (value) {
-                                              setState(() {
-                                                this.keyWord = value;
-                                                this.getOrderList();
-                                              });
-                                            },
-                                            // onChanged: onSearchTextChanged,
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.center,
+                                        children: <Widget>[
+                                          SizedBox(
+                                            width: 6.0,
                                           ),
-                                        ),
-                                      ),
-                                      new IconButton(
-                                        icon: new Icon(Icons.cancel),
-                                        color: Colors.grey,
-                                        iconSize: 18.0,
-                                        onPressed: () {
-                                          this.controller.clear();
-                                          // onSearchTextChanged('');
-                                        },
-                                      ),
-                                    ],
-                                  )),
-                                )),
+                                          Icon(
+                                            Icons.search,
+                                            color: Colors.grey,
+                                          ),
+                                          Expanded(
+                                            child: Container(
+                                              alignment: Alignment.center,
+                                              child: TextField(
+                                                controller: this.controller,
+                                                decoration: new InputDecoration(
+                                                    contentPadding:
+                                                        EdgeInsets.only(
+                                                            bottom: 12.0),
+                                                    hintText: '输入关键字',
+                                                    border: InputBorder.none),
+                                                onSubmitted: (value) {
+                                                  setState(() {
+                                                    this.keyWord = value;
+                                                    this.getOrderList();
+                                                  });
+                                                },
+                                                // onChanged: onSearchTextChanged,
+                                              ),
+                                            ),
+                                          ),
+                                          new IconButton(
+                                            icon: new Icon(Icons.cancel),
+                                            color: Colors.grey,
+                                            iconSize: 18.0,
+                                            onPressed: () {
+                                              this.controller.clear();
+                                              // onSearchTextChanged('');
+                                            },
+                                          ),
+                                        ],
+                                      )),
+                                ),
+                                new SizedBox(
+                                  width: 60.0,
+                                  height: 40.0,
+                                  child: new RaisedButton(
+                                    color: Colors.lightBlueAccent,
+                                    child: new Text('搜索',style: TextStyle(fontSize: 14.0, color: Colors.white)),
+                                    onPressed: (){
+                                      setState(() {
+                                        this.keyWord = this.controller.text;
+                                        this.getOrderList();
+                                      });
+                                    },
+                                  ),
+                                ),
+                              ]),
+                            ),
                           ),
                         ],
                       ),
