@@ -291,11 +291,22 @@ class _PurchaseWarehousingDetailState extends State<PurchaseWarehousingDetail> {
   }
 
   void _onEvent(Object event) async {
-    /*  setState(() {*/
     _code = event;
-    this.getMaterialList();
     print("ChannelPage: $event");
-    /*});*/
+    switch (checkItem) {
+      case 'Batch':
+        this._textNumber.text = _code;
+        Navigator.pop(context);
+        setState(() {
+          this.hobby[checkData][checkDataChild]["value"]["label"] = _code;
+          this.hobby[checkData][checkDataChild]['value']["value"] = _code;
+        });
+        checkItem = "";
+        break;
+      default:
+        this.getMaterialList();
+        break;
+    }
   }
   getMaterialList() async {
     Map<String, dynamic> userMap = Map();
@@ -587,7 +598,9 @@ class _PurchaseWarehousingDetailState extends State<PurchaseWarehousingDetail> {
                                 this.hobby[i][j]["value"]["label"].toString();
                             this._FNumber =
                                 this.hobby[i][j]["value"]["label"].toString();
-                            checkItem = 'FNumber';
+                            if(j==5){
+                              checkItem = 'Batch';
+                            }
                             this.show = false;
                             checkData = i;
                             checkDataChild = j;

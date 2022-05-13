@@ -302,11 +302,22 @@ class _ReturnGoodsDetailState extends State<ReturnGoodsDetail> {
   }
 
   void _onEvent(Object event) async {
-    /*  setState(() {*/
     _code = event;
-    this.getMaterialList();
     print("ChannelPage: $event");
-    /*});*/
+    switch (checkItem) {
+      case 'Batch':
+        this._textNumber.text = _code;
+        Navigator.pop(context);
+        setState(() {
+          this.hobby[checkData][checkDataChild]["value"]["label"] = _code;
+          this.hobby[checkData][checkDataChild]['value']["value"] = _code;
+        });
+        checkItem = "";
+        break;
+      default:
+        this.getMaterialList();
+        break;
+    }
   }
 
   void _onError(Object error) {
@@ -674,6 +685,9 @@ class _ReturnGoodsDetailState extends State<ReturnGoodsDetail> {
                               icon: new Icon(Icons.filter_center_focus),
                               tooltip: '点击扫描',
                               onPressed: () {
+                                if(j==11){
+                                  checkItem = 'Batch';
+                                }
                                 this._textNumber.text =
                                 this.hobby[i][j]["value"]["label"];
                                 this._FNumber =
