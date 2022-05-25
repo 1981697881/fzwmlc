@@ -34,9 +34,9 @@ class ExWarehouseDetail extends StatefulWidget {
 }
 
 class _ExWarehouseDetailState extends State<ExWarehouseDetail> {
-  var F_VBMY_Text1 = new TextEditingController();
-  var F_VBMY_Text2 = new TextEditingController();
-  var F_VBMY_Text3 = new TextEditingController();
+  var F_VBMY_Text1= '';
+  var F_VBMY_Text2= '';
+  var F_VBMY_Text3= '';
   var _remarkContent = new TextEditingController();
   GlobalKey<TextWidgetState> textKey = GlobalKey();
   GlobalKey<PartRefreshWidgetState> globalKey = GlobalKey();
@@ -351,13 +351,17 @@ class _ExWarehouseDetailState extends State<ExWarehouseDetail> {
     var menuData = sharedPreferences.getString('MenuPermissions');
     var deptData = jsonDecode(menuData)[0];
     var scanCode = _code.split(",");
-    userMap['FilterString'] = "FNumber='" +
+    /*userMap['FilterString'] = "FNumber='" +
         scanCode[0] +
         "' and FForbidStatus = 'A' and FUseOrgId.FNumber = " +
         deptData[1];
     userMap['FormId'] = 'BD_MATERIAL';
     userMap['FieldKeys'] =
-        'FMATERIALID,FName,FNumber,FSpecification,FBaseUnitId.FName,FBaseUnitId.FNumber,FIsBatchManage';
+        'FMATERIALID,FName,FNumber,FSpecification,FBaseUnitId.FName,FBaseUnitId.FNumber,FIsBatchManage,FStockId.FName,FStockId.FNumber';*/
+    userMap['FilterString'] = "FBillNo='"+scanCode[0]+"' and FCloseStatus = 'A'";
+    userMap['FormId'] = 'SAL_SaleOrder';
+    userMap['FieldKeys'] =
+    'FBillNo,FMaterialId.FName,FMaterialId.FNumber,FMaterialId.FSpecification,FUnitID.FName,FUnitID.FNumber,FMaterialId.FIsBatchManage,FSOStockId.FName,FSOStockId.FNumber,F_TLWD_Text';
     Map<String, dynamic> dataMap = Map();
     dataMap['data'] = userMap;
     String order = await CurrencyEntity.polling(dataMap);
@@ -379,6 +383,7 @@ class _ExWarehouseDetailState extends State<ExWarehouseDetail> {
     ]);
     if (materialDate.length > 0) {
       var number = 0;
+      this.F_VBMY_Text1 = materialDate[0][9];
       for (var element in hobby) {
         //判断是否启用批号
         if (element[5]['isHide']) {
@@ -418,6 +423,7 @@ class _ExWarehouseDetailState extends State<ExWarehouseDetail> {
         }
       }
       if (number == 0 && this.fBillNo == "") {
+        hobby = [];
         materialDate.forEach((value) {
           List arr = [];
           arr.add({
@@ -443,7 +449,7 @@ class _ExWarehouseDetailState extends State<ExWarehouseDetail> {
             "value": {"label": value[4], "value": value[5]}
           });
           arr.add({
-            "title": "入库数量",
+            "title": "出库数量",
             "name": "FRealQty",
             "isHide": false,
             "value": {"label": "1", "value": "1"}
@@ -452,15 +458,15 @@ class _ExWarehouseDetailState extends State<ExWarehouseDetail> {
             "title": "仓库",
             "name": "FStockID",
             "isHide": false,
-            "value": {"label": "", "value": ""}
+            "value": {"label": value[7], "value": value[8]}
           });
           arr.add({
             "title": "批号",
             "name": "FLot",
             "isHide": value[6] != true,
             "value": {
-              "label": value[6] ? (scanCode.length > 1 ? scanCode[1] : '') : '',
-              "value": value[6] ? (scanCode.length > 1 ? scanCode[1] : '') : ''
+              "label": value[9],
+              "value": value[9]
             }
           });
           arr.add({
@@ -949,11 +955,19 @@ class _ExWarehouseDetailState extends State<ExWarehouseDetail> {
                           // 关闭 Dialog
                           Navigator.pop(context);
                           setState(() {
+                            if(checkItem == "F_VBMY_Text1"){
+                              F_VBMY_Text1 = _FNumber;
+                            }else if(checkItem == "F_VBMY_Text2"){
+                              F_VBMY_Text2 = _FNumber;
+                            }else if(checkItem == "F_VBMY_Text3"){
+                              F_VBMY_Text3 = _FNumber;
+                            }else{
+                              this.hobby[checkData][checkDataChild]["value"]
+                              ["label"] = _FNumber;
+                              this.hobby[checkData][checkDataChild]['value']
+                              ["value"] = _FNumber;
+                            }
                             checkItem = "";
-                            this.hobby[checkData][checkDataChild]["value"]
-                                ["label"] = _FNumber;
-                            this.hobby[checkData][checkDataChild]['value']
-                                ["value"] = _FNumber;
                           });
                         },
                         child: Text(
@@ -1007,9 +1021,9 @@ class _ExWarehouseDetailState extends State<ExWarehouseDetail> {
       Model['FOwnerTypeIdHead'] = "BD_OwnerOrg";
       Model['FStockDirect'] = "GENERAL";
       Model['FBizType'] = "0";
-      Model['F_VBMY_Text3'] = this.F_VBMY_Text1.text;
-      Model['F_VBMY_Text'] = this.F_VBMY_Text2.text;
-      Model['F_VBMY_Text1'] = this.F_VBMY_Text3.text;
+      Model['F_VBMY_Text3'] = this.F_VBMY_Text1;
+      Model['F_VBMY_Text'] = this.F_VBMY_Text2;
+      Model['F_VBMY_Text1'] = this.F_VBMY_Text3;
       /*Model['F_ora_Assistant'] = {"FNumber": this.typeNumber};*/
       Model['FOwnerIdHead'] = {"FNumber": deptData[1]};
       Model['FNote'] = this._remarkContent.text;
@@ -1145,99 +1159,66 @@ class _ExWarehouseDetailState extends State<ExWarehouseDetail> {
                       'department'),
                   /*_item('类别', this.typeList, this.typeName,
                       'type'),*/
-                  Column(
-                    children: [
-                      Container(
-                        color: Colors.white,
-                        child: ListTile(
-                          title: TextField(
-                            //最多输入行数
-                            maxLines: 1,
-                            decoration: InputDecoration(
-                              hintText: "订单号",
-                              //给文本框加边框
-                              border: OutlineInputBorder(),
-                            ),
-                            controller: this.F_VBMY_Text1,
-                            //改变回调
-                            onChanged: (value) {
-                              setState(() {
-                                F_VBMY_Text1.value = TextEditingValue(
-                                    text: value,
-                                    selection: TextSelection.fromPosition(
-                                        TextPosition(
-                                            affinity: TextAffinity.downstream,
-                                            offset: value.length)));
-                              });
-                            },
-                          ),
-                        ),
-                      ),
-                      divider,
-                    ],
-                  ),
-                  Column(
-                    children: [
-                      Container(
-                        color: Colors.white,
-                        child: ListTile(
-                          title: TextField(
-                            //最多输入行数
-                            maxLines: 1,
-                            decoration: InputDecoration(
-                              hintText: "尺寸",
-                              //给文本框加边框
-                              border: OutlineInputBorder(),
-                            ),
-                            controller: this.F_VBMY_Text2,
-                            //改变回调
-                            onChanged: (value) {
-                              setState(() {
-                                F_VBMY_Text2.value = TextEditingValue(
-                                    text: value,
-                                    selection: TextSelection.fromPosition(
-                                        TextPosition(
-                                            affinity: TextAffinity.downstream,
-                                            offset: value.length)));
-                              });
-                            },
-                          ),
-                        ),
-                      ),
-                      divider,
-                    ],
-                  ),
-                  Column(
-                    children: [
-                      Container(
-                        color: Colors.white,
-                        child: ListTile(
-                          title: TextField(
-                            //最多输入行数
-                            maxLines: 1,
-                            decoration: InputDecoration(
-                              hintText: "重量",
-                              //给文本框加边框
-                              border: OutlineInputBorder(),
-                            ),
-                            controller: this.F_VBMY_Text3,
-                            //改变回调
-                            onChanged: (value) {
-                              setState(() {
-                                F_VBMY_Text3.value = TextEditingValue(
-                                    text: value,
-                                    selection: TextSelection.fromPosition(
-                                        TextPosition(
-                                            affinity: TextAffinity.downstream,
-                                            offset: value.length)));
-                              });
-                            },
-                          ),
-                        ),
-                      ),
-                      divider,
-                    ],
-                  ),
+                  Column(children: [
+                    Container(
+                      color: Colors.white,
+                      child: ListTile(
+                          title: Text("订单号：$F_VBMY_Text1"),
+                          trailing: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: <Widget>[
+                                IconButton(
+                                  icon: new Icon(Icons.create),
+                                  tooltip: '输入',
+                                  onPressed: () {
+                                    checkItem = 'F_VBMY_Text1';
+                                    scanDialog();
+                                  },
+                                ),
+                              ])),
+                    ),
+                    divider,
+                  ]),
+                  Column(children: [
+                    Container(
+                      color: Colors.white,
+                      child: ListTile(
+                          title: Text("尺寸：$F_VBMY_Text2"),
+                          trailing: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: <Widget>[
+                                IconButton(
+                                  icon: new Icon(Icons.create),
+                                  tooltip: '输入',
+                                  onPressed: () {
+                                    checkItem = 'F_VBMY_Text2';
+                                    scanDialog();
+                                  },
+                                ),
+                              ])),
+                    ),
+                    divider,
+                  ]),
+                  Column(children: [
+                    Container(
+                      color: Colors.white,
+                      child: ListTile(
+                          title: Text("重量：$F_VBMY_Text3"),
+                          trailing: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: <Widget>[
+                                IconButton(
+                                  icon: new Icon(Icons.create),
+                                  tooltip: '输入',
+                                  onPressed: () {
+                                    checkItem = 'F_VBMY_Text3';
+                                    scanDialog();
+                                  },
+                                ),
+                              ])),
+                    ),
+                    divider,
+                  ]),
                   Column(
                     children: [
                       Container(

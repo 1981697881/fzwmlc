@@ -41,11 +41,10 @@ class _RetrievalPageState extends State<RetrievalPage> {
   @override
   void initState() {
     super.initState();
-    DateTime dateTime = DateTime.now().add(Duration(days: -1));
+    DateTime dateTime = DateTime.now().add(Duration(days: -30));
     DateTime newDate = DateTime.now();
     _dateSelectText =
         "${dateTime.year}-${dateTime.month.toString().padLeft(2, '0')}-${dateTime.day.toString().padLeft(2, '0')} 00:00:00.000 - ${newDate.year}-${newDate.month.toString().padLeft(2, '0')}-${newDate.day.toString().padLeft(2, '0')} 00:00:00.000";
-
     /// 开启监听
     if (_subscription == null) {
       _subscription = scannerPlugin
@@ -89,9 +88,7 @@ class _RetrievalPageState extends State<RetrievalPage> {
           "FRemainOutQty>0 and FCLOSESTATUS='A' and FDate>= '$startDate' and FDate <= '$endDate'";
     }
     if (this.keyWord != '') {
-      userMap['FilterString'] = "F_VBMY_Text='" +
-          scanCode[0] +
-          "' and FCLOSESTATUS='A' and FRemainOutQty>0 and FDate>= '$startDate' and FDate <= '$endDate'";
+      userMap['FilterString'] = "F_VBMY_Text='" + scanCode[0] + "' and FCLOSESTATUS='A' and FRemainOutQty>0 and FDate>= '$startDate' and FDate <= '$endDate'";
     }
     userMap['FormId'] = 'SAL_DELIVERYNOTICE';
     userMap['FieldKeys'] =
@@ -274,10 +271,11 @@ class _RetrievalPageState extends State<RetrievalPage> {
 
   void showDateSelect() async {
     //获取当前的时间
-    DateTime now = DateTime.now();
-    DateTime start = DateTime(now.year, now.month, now.day - 1);
+    DateTime dateTime = DateTime.now().add(Duration(days: -30));
+    DateTime now = DateTime.now();;
+    DateTime start = DateTime(dateTime.year, dateTime.month, dateTime.day);
     //在当前的时间上多添加4天
-    DateTime end = DateTime(start.year, start.month, start.day);
+    DateTime end = DateTime(now.year, now.month, now.day);
     //显示时间选择器
     DateTimeRange selectTimeRange = await showDateRangePicker(
         //语言环境
@@ -292,11 +290,13 @@ class _RetrievalPageState extends State<RetrievalPage> {
         //初始的时间范围选择
         initialDateRange: DateTimeRange(start: start, end: end));
     //结果
-    _dateSelectText = selectTimeRange.toString();
-    //选择结果中的开始时间
-    DateTime selectStart = selectTimeRange.start;
-    //选择结果中的结束时间
-    DateTime selectEnd = selectTimeRange.end;
+    if(selectTimeRange != null){
+      _dateSelectText = selectTimeRange.toString();
+      //选择结果中的开始时间
+      DateTime selectStart = selectTimeRange.start;
+      //选择结果中的结束时间
+      DateTime selectEnd = selectTimeRange.end;
+    }
     print(_dateSelectText);
     setState(() {});
   }

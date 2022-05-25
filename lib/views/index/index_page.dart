@@ -5,9 +5,7 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:english_words/english_words.dart';
 import 'package:fzwmlc/http/api_response.dart';
-import 'package:fzwmlc/model/authorize_entity.dart';
 import 'package:fzwmlc/model/version_entity.dart';
-import 'package:fzwmlc/utils/menu_permissions.dart';
 import 'package:fzwmlc/views/login/login_page.dart';
 import 'package:package_info/package_info.dart';
 import 'package:progress_dialog/progress_dialog.dart';
@@ -209,7 +207,9 @@ class _IndexPageState extends State<IndexPage> {
     });
     return path;
   }
-
+  double hc_ScreenWidth() {
+    return window.physicalSize.width / window.devicePixelRatio;
+  }
 /*一个渐变颜色的正方形集合*/
   List<Widget> Boxs(List<Map<String, dynamic>> menu) =>
       List.generate(menu.length, (index) {
@@ -221,7 +221,7 @@ class _IndexPageState extends State<IndexPage> {
               );
             },
             child: Container(
-                width: 80,
+                width: hc_ScreenWidth()/4,
                 height: 80,
                 alignment: Alignment.center,
                 decoration: BoxDecoration(

@@ -412,11 +412,13 @@ class _PickingPageState extends State<PickingPage> {
         //初始的时间范围选择
         initialDateRange: DateTimeRange(start: start, end: end));
     //结果
-    _dateSelectText = selectTimeRange.toString();
-    //选择结果中的开始时间
-    DateTime selectStart = selectTimeRange.start;
-    //选择结果中的结束时间
-    DateTime selectEnd = selectTimeRange.end;
+    if(selectTimeRange != null){
+      _dateSelectText = selectTimeRange.toString();
+      //选择结果中的开始时间
+      DateTime selectStart = selectTimeRange.start;
+      //选择结果中的结束时间
+      DateTime selectEnd = selectTimeRange.end;
+    }
     setState(() {});
   }
   double hc_ScreenWidth() {
