@@ -31,7 +31,7 @@ class _PurchaseWarehousingPageState extends State<PurchaseWarehousingPage> {
   const EventChannel('com.shinow.pda_scanner/plugin');
   StreamSubscription _subscription;
   var _code;
-
+  var isScan = false;
   List<dynamic> orderDate = [];
   final controller = TextEditingController();
 
@@ -69,16 +69,22 @@ class _PurchaseWarehousingPageState extends State<PurchaseWarehousingPage> {
     Map<String, dynamic> userMap = Map();
     userMap['FilterString'] = "FInStockQty >0";
     var scanCode = keyWord.split(",");
-    if (this._dateSelectText != "") {
-      this.startDate = this._dateSelectText.substring(0, 10);
-      this.endDate = this._dateSelectText.substring(26, 36);
+    if(isScan){
       userMap['FilterString'] =
-      "FDate>= '$startDate' and FCloseStatus = 'A' and FDate <= '$endDate'";
+      "FBillNo='"+scanCode[0]+"' and FCloseStatus = 'A'";
+    }else{
+      if (this._dateSelectText != "") {
+        this.startDate = this._dateSelectText.substring(0, 10);
+        this.endDate = this._dateSelectText.substring(26, 36);
+        userMap['FilterString'] =
+        "FDate>= '$startDate' and FCloseStatus = 'A' and FDate <= '$endDate'";
+      }
+      if (this.keyWord != '') {
+        userMap['FilterString'] =/*and FInStockQty>0*/
+        "FBillNo='"+scanCode[0]+"' and FCloseStatus = 'A' and FDate>= '$startDate' and FDate <= '$endDate'";
+      }
     }
-    if (this.keyWord != '') {
-      userMap['FilterString'] =/*and FInStockQty>0*/
-      "FBillNo='"+scanCode[0]+"' and FCloseStatus = 'A' and FDate>= '$startDate' and FDate <= '$endDate'";
-    }
+
     userMap['FormId'] = 'PUR_ReceiveBill';
     userMap['FieldKeys'] =
     'FBillNo,FSupplierId.FNumber,FSupplierId.FName,FDate,FDetailEntity_FEntryId,FMaterialId.FNumber,FMaterialId.FName,FMaterialId.FSpecification,FPurOrgId.FNumber,FPurOrgId.FName,FUnitId.FNumber,FUnitId.FName,FActlandQty,FSrcBillNo,FID';
@@ -144,12 +150,12 @@ class _PurchaseWarehousingPageState extends State<PurchaseWarehousingPage> {
       });
       setState(() {
         EasyLoading.dismiss();
-        this._getHobby();
+        this._getHobby();isScan = false;
       });
     } else {
       setState(() {
         EasyLoading.dismiss();
-        this._getHobby();
+        this._getHobby();isScan = false;
       });
       ToastUtil.showInfo('无数据');
     }
@@ -160,6 +166,7 @@ class _PurchaseWarehousingPageState extends State<PurchaseWarehousingPage> {
     _code = event;
     EasyLoading.show(status: 'loading...');
     keyWord = _code;
+    isScan = true;
     this.controller.text = _code;
     await getOrderList();
     /*});*/

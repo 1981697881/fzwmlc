@@ -264,7 +264,7 @@ class _RetrievalDetailState extends State<RetrievalDetail> {
           "title": "仓库",
           "name": "FStockId",
           "isHide": false,
-          "value": {"label": value[18], "value": value[19]}
+          "value": {"label": value[18] == null ?"库存商品":value[18], "value": value[19] == null ?"CK018":value[19]}
         });
         arr.add({
           "title": "批号",
@@ -534,8 +534,7 @@ class _RetrievalDetailState extends State<RetrievalDetail> {
           color: Colors.white,
           child: ListTile(
             title: Text(title),
-            onTap: () => _onClickItem(data, selectData, hobby,
-                label: label, stock: stock),
+            onTap: () => data.length>0?_onClickItem(data, selectData, hobby, label: label,stock: stock):{ToastUtil.showInfo('无数据')},
             trailing: Row(mainAxisSize: MainAxisSize.min, children: <Widget>[
               MyText(selectData.toString() == "" ? '暂无' : selectData.toString(),
                   color: Colors.grey, rightpadding: 18),

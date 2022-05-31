@@ -326,14 +326,14 @@ class _OtherWarehousingDetailState extends State<OtherWarehousingDetail> {
     var menuData = sharedPreferences.getString('MenuPermissions');
     var deptData = jsonDecode(menuData)[0];
     var scanCode = _code.split(",");
-    /*userMap['FilterString'] = "FNumber='"+scanCode[0]+"' and FForbidStatus = 'A' and FUseOrgId.FNumber = "+deptData[1];
+    userMap['FilterString'] = "FNumber='"+scanCode[0]+"' and FForbidStatus = 'A' and FUseOrgId.FNumber = "+deptData[1];
     userMap['FormId'] = 'BD_MATERIAL';
     userMap['FieldKeys'] =
-    'FMATERIALID,FName,FNumber,FSpecification,FBaseUnitId.FName,FBaseUnitId.FNumber,FIsBatchManage';*/
-    userMap['FilterString'] = "FBillNo='"+scanCode[0]+"' and FCloseStatus = 'A'";
+    'FMATERIALID,FName,FNumber,FSpecification,FBaseUnitId.FName,FBaseUnitId.FNumber,FIsBatchManage';
+    /*userMap['FilterString'] = "F_TLWD_Text='"+scanCode[1]+"' and FCloseStatus = 'A'";
     userMap['FormId'] = 'SAL_SaleOrder';
     userMap['FieldKeys'] =
-    'FBillNo,FMaterialId.FName,FMaterialId.FNumber,FMaterialId.FSpecification,FUnitID.FName,FUnitID.FNumber,FMaterialId.FIsBatchManage,F_TLWD_Text';
+    'FBillNo,FMaterialId.FName,FMaterialId.FNumber,FMaterialId.FSpecification,FUnitID.FName,FUnitID.FNumber,FMaterialId.FIsBatchManage,F_TLWD_Text';*/
     Map<String, dynamic> dataMap = Map();
     dataMap['data'] = userMap;
     String order = await CurrencyEntity.polling(dataMap);
@@ -342,7 +342,7 @@ class _OtherWarehousingDetailState extends State<OtherWarehousingDetail> {
     FDate = formatDate(DateTime.now(), [yyyy, "-", mm, "-", dd,]);
     selectData[DateMode.YMD] = formatDate(DateTime.now(), [yyyy, "-", mm, "-", dd,]);
     if (materialDate.length > 0) {
-      this.F_VBMY_Text1 = materialDate[0][7];
+      this.F_VBMY_Text1 = scanCode[1];
       var number = 0;
       for (var element in hobby) {
         //判断是否启用批号
@@ -414,7 +414,7 @@ class _OtherWarehousingDetailState extends State<OtherWarehousingDetail> {
             "title": "批号",
             "name": "FLot",
             "isHide": value[6] != true,
-            "value": {"label": value[7], "value": value[7]}
+            "value": {"label": scanCode[1], "value": scanCode[1]}
           });
           arr.add({
             "title": "仓位",
@@ -465,7 +465,7 @@ class _OtherWarehousingDetailState extends State<OtherWarehousingDetail> {
           color: Colors.white,
           child: ListTile(
             title: Text(title),
-            onTap: () => _onClickItem(data, selectData, hobby, label: label,stock: stock),
+            onTap: () => data.length>0?_onClickItem(data, selectData, hobby, label: label,stock: stock):{ToastUtil.showInfo('无数据')},
             trailing: Row(mainAxisSize: MainAxisSize.min, children: <Widget>[
               MyText(selectData.toString()=="" ? '暂无':selectData.toString(),
                   color: Colors.grey, rightpadding: 18),

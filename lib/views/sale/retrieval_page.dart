@@ -37,7 +37,7 @@ class _RetrievalPageState extends State<RetrievalPage> {
 
   List<dynamic> orderDate = [];
   final controller = TextEditingController();
-
+  var isScan = false;
   @override
   void initState() {
     super.initState();
@@ -81,14 +81,18 @@ class _RetrievalPageState extends State<RetrievalPage> {
     Map<String, dynamic> userMap = Map();
     userMap['FilterString'] = "FRemainOutQty>0";
     var scanCode = keyWord.split(",");
-    if (this._dateSelectText != "") {
-      this.startDate = this._dateSelectText.substring(0, 10);
-      this.endDate = this._dateSelectText.substring(26, 36);
-      userMap['FilterString'] =
-          "FRemainOutQty>0 and FCLOSESTATUS='A' and FDate>= '$startDate' and FDate <= '$endDate'";
-    }
-    if (this.keyWord != '') {
-      userMap['FilterString'] = "F_VBMY_Text='" + scanCode[0] + "' and FCLOSESTATUS='A' and FRemainOutQty>0 and FDate>= '$startDate' and FDate <= '$endDate'";
+    if(isScan){
+      userMap['FilterString'] = "F_VBMY_Text='" + scanCode[0] + "' and FCLOSESTATUS='A' and FRemainOutQty>0";
+    }else{
+      if (this._dateSelectText != "") {
+        this.startDate = this._dateSelectText.substring(0, 10);
+        this.endDate = this._dateSelectText.substring(26, 36);
+        userMap['FilterString'] =
+        "FRemainOutQty>0 and FCLOSESTATUS='A' and FDate>= '$startDate' and FDate <= '$endDate'";
+      }
+      if (this.keyWord != '') {
+        userMap['FilterString'] = "F_VBMY_Text='" + scanCode[0] + "' and FCLOSESTATUS='A' and FRemainOutQty>0 and FDate>= '$startDate' and FDate <= '$endDate'";
+      }
     }
     userMap['FormId'] = 'SAL_DELIVERYNOTICE';
     userMap['FieldKeys'] =
@@ -167,12 +171,12 @@ class _RetrievalPageState extends State<RetrievalPage> {
       });
       setState(() {
         EasyLoading.dismiss();
-        this._getHobby();
+        this._getHobby();isScan = false;
       });
     } else {
       setState(() {
         EasyLoading.dismiss();
-        this._getHobby();
+        this._getHobby();isScan = false;
       });
       ToastUtil.showInfo('无数据');
     }
@@ -183,6 +187,7 @@ class _RetrievalPageState extends State<RetrievalPage> {
     _code = event;
     EasyLoading.show(status: 'loading...');
     keyWord = _code;
+    isScan = true;
     this.controller.text = _code;
     await getOrderList();
     /*});*/
