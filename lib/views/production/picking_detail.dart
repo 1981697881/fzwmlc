@@ -32,7 +32,7 @@ class PickingDetail extends StatefulWidget {
   var FBarcode;
 
   PickingDetail(
-      {Key key,
+      {Key ?key,
       @required this.FBillNo,
       @required this.FSeq,
       @required this.FEntryId,
@@ -82,7 +82,7 @@ class _PickingDetailState extends State<PickingDetail> {
   final scanIcon = Icon(Icons.filter_center_focus);
   static const scannerPlugin =
       const EventChannel('com.shinow.pda_scanner/plugin');
-  StreamSubscription _subscription;
+  StreamSubscription ?_subscription;
   var _code;
   var _FNumber;
   var FSeq;
@@ -138,7 +138,7 @@ class _PickingDetailState extends State<PickingDetail> {
 
     /// 取消监听
     if (_subscription != null) {
-      _subscription.cancel();
+      _subscription!.cancel();
     }
   }
 
@@ -242,7 +242,7 @@ class _PickingDetailState extends State<PickingDetail> {
     }
   }
 
-  void _onEvent(Object event) async {
+  void _onEvent(event) async {
     _code = event;
     print("ChannelPage: $event");
   }
@@ -253,7 +253,7 @@ class _PickingDetailState extends State<PickingDetail> {
     });
   }
 
-  Widget _item(title, var data, selectData, hobby, {String label,var stock}) {
+  Widget _item(title, var data, selectData, hobby, {String ?label,var stock}) {
     if (selectData == null) {
       selectData = "";
     }
@@ -290,9 +290,9 @@ class _PickingDetailState extends State<PickingDetail> {
               PartRefreshWidget(globalKey, () {
                 //2、使用 创建一个widget
                 return MyText(
-                    PicketUtil.strEmpty(selectData[model])
+                    (PicketUtil.strEmpty(selectData[model])
                         ? '暂无'
-                        : selectData[model],
+                        : selectData[model])!,
                     color: Colors.grey,
                     rightpadding: 18);
               }),
@@ -335,7 +335,7 @@ class _PickingDetailState extends State<PickingDetail> {
     );
   }
 
-  void _onClickItem(var data, var selectData, hobby, {String label,var stock}) {
+  void _onClickItem(var data, var selectData, hobby, {String ?label,var stock}) {
     Pickers.showSinglePicker(
       context,
       data: data,

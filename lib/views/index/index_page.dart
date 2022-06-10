@@ -19,7 +19,7 @@ import 'middle_layer_page.dart';
 
 class IndexPage extends StatefulWidget {
   IndexPage({
-    Key key,
+    Key ?key,
   }) : super(key: key);
 
   @override
@@ -38,11 +38,11 @@ class _IndexPageState extends State<IndexPage> {
   String downloadUrl = '';
   String buildVersion = '';
   String buildUpdateDescription = '';
-  ProgressDialog pr;
+  late ProgressDialog pr;
   String apkName = 'fzwmlc.apk';
   String appPath = '';
   ReceivePort _port = ReceivePort();
-  SharedPreferences sharedPreferences;
+  late SharedPreferences sharedPreferences;
 
   @override
   void initState() {
@@ -79,10 +79,10 @@ class _IndexPageState extends State<IndexPage> {
   /// 执行版本更新的网络请求
   _getNewVersionAPP(context) async {
     ApiResponse<VersionEntity> entity = await VersionEntity.getVersion();
-    serviceVersionCode = entity.data.data.buildVersionNo;
-    buildVersion = entity.data.data.buildVersion;
-    buildUpdateDescription = entity.data.data.buildUpdateDescription;
-    downloadUrl = entity.data.data.downloadUrl;
+    serviceVersionCode = entity.data!.data.buildVersionNo;
+    buildVersion = entity.data!.data.buildVersion;
+    buildUpdateDescription = entity.data!.data.buildUpdateDescription;
+    downloadUrl = entity.data!.data.downloadUrl;
     _checkVersionCode();
   }
 
@@ -162,7 +162,7 @@ class _IndexPageState extends State<IndexPage> {
   static void _downLoadCallback(
       String id, DownloadTaskStatus status, int progress) {
     final SendPort send =
-        IsolateNameServer.lookupPortByName('downloader_send_port');
+        IsolateNameServer.lookupPortByName('downloader_send_port')!;
     send.send([id, status, progress]);
   }
 
@@ -254,7 +254,7 @@ class _IndexPageState extends State<IndexPage> {
                       ),
                       child: Icon(
                         menu[index]['icon'],
-                        size: IconTheme.of(context).size - 6,
+                        size: (IconTheme.of(context).size!) - 6,
                         color: Colors.white,
                       ),
                     ),
@@ -274,7 +274,7 @@ class _IndexPageState extends State<IndexPage> {
     var deptData = sharedPreferences.getString('menuList');
     var menuList = new Map<dynamic, dynamic>.from(jsonDecode(deptData));
     var fAuthList = menuList['FAuthList'].split(",");
-    var menu = List<Map<String, dynamic>>();
+    var menu = <Map<String, dynamic>>[];
     for (var i in fAuthList) {
       switch (i) {
         case "1":
@@ -535,7 +535,7 @@ class AppBarTabsItem extends StatelessWidget {
   final Color color;
   final router;
 
-  const AppBarTabsItem({Key key, this.icon, this.text, this.color, this.router})
+  const AppBarTabsItem({Key ?key, required this.icon, required this.text, required this.color, this.router})
       : super(key: key);
 
   @override
@@ -555,7 +555,7 @@ class AppBarTabsItem extends StatelessWidget {
                 color: this.color, borderRadius: BorderRadius.circular(6.0)),
             child: Icon(
               this.icon,
-              size: IconTheme.of(context).size - 6,
+              size: (IconTheme.of(context).size!) - 6,
               color: Colors.white,
             ),
           ),

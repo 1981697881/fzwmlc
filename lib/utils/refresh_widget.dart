@@ -6,7 +6,7 @@ typedef BuildWidget = Widget Function();
 
 // ignore: must_be_immutable
 class PartRefreshWidget extends StatefulWidget {
-  final Key key;
+  final Key ?key;
   BuildWidget child;
 
   // 接收一个Key

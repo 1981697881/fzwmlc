@@ -4,9 +4,8 @@ import 'package:fzwmlc/model/submit_entity.dart';
 import 'package:fzwmlc/utils/toast_util.dart';
 
 class HandlerOrder {
-  // ignore: missing_return
   static Future<bool> orderHandler(BuildContext context,Map<String, dynamic> map, type, formid, fun,
-      {String title}) async {
+      {String? title}) async {
     var subData = await fun;
     var res = jsonDecode(subData);
     if (res != null) {
@@ -23,6 +22,8 @@ class HandlerOrder {
             map, res['Result']['ResponseStatus']['Errors'][0]['Message']);
         return false;
       }
+    }else{
+      return false;
     }
   }
   // 订单删除
