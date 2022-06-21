@@ -116,6 +116,7 @@ class _PurchaseWarehousingDetailState extends State<PurchaseWarehousingDetail> {
     Map<String, dynamic> userMap = Map();
     SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
     var menuData = sharedPreferences.getString('MenuPermissions');
+    var fStaffNumber = sharedPreferences.getString('FStaffNumber');
     var deptData = jsonDecode(menuData)[0];
     userMap['FormId'] = 'BD_Department';
     userMap['FieldKeys'] = 'FUseOrgId,FName,FNumber';
@@ -127,6 +128,17 @@ class _PurchaseWarehousingDetailState extends State<PurchaseWarehousingDetail> {
     departmentListObj.forEach((element) {
       departmentList.add(element[1]);
     });
+    if(fStaffNumber == "Z069"){
+      setState(() {
+        this.departmentName = "五金部门";
+        this.departmentNumber = "BM000006";
+      });
+    }else if(fStaffNumber == "Z090"){
+      setState(() {
+        this.departmentName = "霓虹灯部门";
+        this.departmentNumber = "BM000007";
+      });
+    }
   }
   //获取线路名称
   getTypeList() async {
@@ -203,7 +215,8 @@ class _PurchaseWarehousingDetailState extends State<PurchaseWarehousingDetail> {
 
   getOrderList() async {
     Map<String, dynamic> userMap = Map();
-    print(fBillNo);
+    SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+    var fStaffNumber = sharedPreferences.getString('FStaffNumber');
     userMap['FilterString'] = "FBillNo='$fBillNo'";
     userMap['FormId'] = 'PUR_ReceiveBill';
     userMap['FieldKeys'] =
@@ -244,12 +257,21 @@ class _PurchaseWarehousingDetailState extends State<PurchaseWarehousingDetail> {
           "isHide": false,/*value[12]*/
           "value": {"label": "0", "value": "0"}
         });
-        arr.add({
-          "title": "仓库",
-          "name": "FStockID",
-          "isHide": false,
-          "value": {"label": "", "value": ""}
-        });
+        if(fStaffNumber == "Z090"){
+          arr.add({
+            "title": "仓库",
+            "name": "FStockId",
+            "isHide": false,
+            "value": {"label": "库存商品", "value": "CK017"}
+          });
+        }else{
+          arr.add({
+            "title": "仓库",
+            "name": "FStockID",
+            "isHide": false,
+            "value": {"label": "", "value": ""}
+          });
+        }
         arr.add({
           "title": "批号",
           "name": "FLot",
@@ -312,6 +334,7 @@ class _PurchaseWarehousingDetailState extends State<PurchaseWarehousingDetail> {
     Map<String, dynamic> userMap = Map();
     SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
     var menuData = sharedPreferences.getString('MenuPermissions');
+    var fStaffNumber = sharedPreferences.getString('FStaffNumber');
     var deptData = jsonDecode(menuData)[0];
     var scanCode = _code.split(",");
     userMap['FilterString'] = "FNumber='"+scanCode[0]+"' and FForbidStatus = 'A' and FUseOrgId.FNumber = "+deptData[1];
@@ -398,12 +421,21 @@ class _PurchaseWarehousingDetailState extends State<PurchaseWarehousingDetail> {
             "isHide": false,
             "value": {"label": "1", "value": "1"}
           });
-          arr.add({
-            "title": "仓库",
-            "name": "FStockID",
-            "isHide": false,
-            "value": {"label": "", "value": ""}
-          });
+          if(fStaffNumber == "Z090"){
+            arr.add({
+              "title": "仓库",
+              "name": "FStockId",
+              "isHide": false,
+              "value": {"label": "库存商品", "value": "CK017"}
+            });
+          }else{
+            arr.add({
+              "title": "仓库",
+              "name": "FStockID",
+              "isHide": false,
+              "value": {"label": "", "value": ""}
+            });
+          }
           arr.add({
             "title": "批号",
             "name": "FLot",

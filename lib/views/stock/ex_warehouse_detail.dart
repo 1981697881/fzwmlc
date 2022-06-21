@@ -117,6 +117,7 @@ class _ExWarehouseDetailState extends State<ExWarehouseDetail> {
     Map<String, dynamic> userMap = Map();
     SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
     var menuData = sharedPreferences.getString('MenuPermissions');
+    var fStaffNumber = sharedPreferences.getString('FStaffNumber');
     var deptData = jsonDecode(menuData)[0];
     userMap['FormId'] = 'BD_Department';
     userMap['FieldKeys'] = 'FUseOrgId,FName,FNumber';
@@ -128,6 +129,17 @@ class _ExWarehouseDetailState extends State<ExWarehouseDetail> {
     departmentListObj.forEach((element) {
       departmentList.add(element[1]);
     });
+    if(fStaffNumber == "Z069"){
+      setState(() {
+        this.departmentName = "五金部门";
+        this.departmentNumber = "BM000006";
+      });
+    }else if(fStaffNumber == "Z090"){
+      setState(() {
+        this.departmentName = "霓虹灯部门";
+        this.departmentNumber = "BM000007";
+      });
+    }
   }
 
   //获取仓库
@@ -349,6 +361,7 @@ class _ExWarehouseDetailState extends State<ExWarehouseDetail> {
     Map<String, dynamic> userMap = Map();
     SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
     var menuData = sharedPreferences.getString('MenuPermissions');
+    var fStaffNumber = sharedPreferences.getString('FStaffNumber');
     var deptData = jsonDecode(menuData)[0];
     var scanCode = _code.split(",");
     userMap['FilterString'] = "FNumber='" +
@@ -454,12 +467,21 @@ class _ExWarehouseDetailState extends State<ExWarehouseDetail> {
             "isHide": false,
             "value": {"label": "1", "value": "1"}
           });
-          arr.add({
-            "title": "仓库",
-            "name": "FStockID",
-            "isHide": false,
-            "value": {"label": value[7], "value": value[8]}
-          });
+          if(fStaffNumber == "Z090"){
+            arr.add({
+              "title": "仓库",
+              "name": "FStockId",
+              "isHide": false,
+              "value": {"label": "库存商品", "value": "CK017"}
+            });
+          }else{
+            arr.add({
+              "title": "仓库",
+              "name": "FStockID",
+              "isHide": false,
+              "value": {"label": value[7], "value": value[8]}
+            });
+          }
           arr.add({
             "title": "批号",
             "name": "FLot",
@@ -1171,6 +1193,11 @@ class _ExWarehouseDetailState extends State<ExWarehouseDetail> {
                                   tooltip: '输入',
                                   onPressed: () {
                                     checkItem = 'F_VBMY_Text1';
+                                    this._textNumber.clear();
+                                    this._textNumber.value = _textNumber.value.copyWith(
+                                      text:
+                                      F_VBMY_Text1,
+                                    );
                                     scanDialog();
                                   },
                                 ),
@@ -1191,6 +1218,11 @@ class _ExWarehouseDetailState extends State<ExWarehouseDetail> {
                                   tooltip: '输入',
                                   onPressed: () {
                                     checkItem = 'F_VBMY_Text2';
+                                    this._textNumber.clear();
+                                    this._textNumber.value = _textNumber.value.copyWith(
+                                      text:
+                                      F_VBMY_Text2,
+                                    );
                                     scanDialog();
                                   },
                                 ),
@@ -1211,6 +1243,11 @@ class _ExWarehouseDetailState extends State<ExWarehouseDetail> {
                                   tooltip: '输入',
                                   onPressed: () {
                                     checkItem = 'F_VBMY_Text3';
+                                    this._textNumber.clear();
+                                    this._textNumber.value = _textNumber.value.copyWith(
+                                      text:
+                                      F_VBMY_Text3,
+                                    );
                                     scanDialog();
                                   },
                                 ),

@@ -195,7 +195,7 @@ class _MyHomePageState extends State {
         userMap['FormId'] = 'BD_Empinfo';
         userMap['FilterString'] =
             "FStaffNumber='$username' and FPwd='$password'";
-        userMap['FieldKeys'] = 'FStaffNumber,FUseOrgId.FNumber,FForbidStatus,FAuthCode,FPDASCRK,FPDASCRKS,FPDASCLL,FPDASCLLS,FPDAXSCK,FPDAXSCKS,FPDAXSTH,FPDAXSTHS,FPDACGRK,FPDACGRKS,FPDAPD,FPDAPDS,FPDAQTRK,FPDAQTRKS,FPDAQTCK,FPDAQTCKS,FPDAGXPG,FPDAGXPGS,FPDAGXHB,FPDAGXHBS,FPDASJ,FPDAXJ,FPDAKCCX';
+        userMap['FieldKeys'] = 'FStaffNumber,FUseOrgId.FNumber,FForbidStatus,FAuthCode,FPDASCRK,FPDASCRKS,FPDASCLL,FPDASCLLS,FPDAXSCK,FPDAXSCKS,FPDAXSTH,FPDAXSTHS,FPDACGRK,FPDACGRKS,FPDAPD,FPDAPDS,FPDAQTRK,FPDAQTRKS,FPDAQTCK,FPDAQTCKS,FPDAGXPG,FPDAGXPGS,FPDAGXHB,FPDAGXHBS,FPDASJ,FPDAXJ,FPDAKCCX,FPostDept.FNumber,FPostDept.FName';
         Map<String, dynamic> dataMap = Map();
         dataMap['data'] = userMap;
         String UserEntity = await CurrencyEntity.polling(dataMap);
@@ -204,7 +204,7 @@ class _MyHomePageState extends State {
         if (resUser.length > 0) {
           if (resUser[0][2] == 'A') {
             /* sharedPreferences.setString('FWorkShopNumber', resUser[0][2]);
-            sharedPreferences.setString('FWorkShopName', resUser[0][3]);*/
+            sharedPreferences.setString('FWorkShopName', resUser[0][3]); */
             //  print("登录成功");
             Map<String, dynamic> authorMap = Map();
             authorMap['auth'] = resUser[0][3];

@@ -30,7 +30,7 @@ class _StockPageState extends State<StockPage> {
   final divider = Divider(height: 1, indent: 20);
   final rightIcon = Icon(Icons.keyboard_arrow_right);
   final scanIcon = Icon(Icons.filter_center_focus);
-  var stockNum = 0.0;
+  var stockNum = 0;
   var stockName;
   var stockNumber;
   //仓库
@@ -109,42 +109,57 @@ class _StockPageState extends State<StockPage> {
       orderDate = jsonDecode(order);
       print(orderDate);
      hobby = [];
+     var lotArr = [];
     if (orderDate.length > 0) {
+      this.stockNum = 0;
         orderDate.forEach((value) {
           List arr = [];
-          arr.add({
+          /*arr.add({
             "title": "编码",
             "name": "FMaterialFNumber",
+            "isHide": false,
             "value": {"label": value[0], "value": value[0]}
           });
           arr.add({
             "title": "名称",
             "name": "FMaterialFName",
+            "isHide": false,
             "value": {"label": value[1], "value": value[1]}
           });
           arr.add({
             "title": "规格",
             "name": "FMaterialIdFSpecification",
+            "isHide": false,
             "value": {"label": value[2], "value": value[2]}
           });
           arr.add({
             "title": "仓库",
             "name": "FStockIdFName",
+            "isHide": false,
             "value": {"label": value[3], "value": value[3]}
-          });
-          arr.add({
+          });*/
+          /*arr.add({
             "title": "库存数量",
             "name": "FBaseQty",
+            "isHide": value[4] == 0.0?true:false,
             "value": {"label": value[4], "value": value[4]}
-          });
+          });*/
           arr.add({
             "title": "批号",
             "name": "FLot",
+            "isHide": value[4] == 0.0 || value[5] == null?true:false,
             "value": {"label": value[5] == null?"":value[5], "value": value[5] == null?"":value[5]}
           });
-          this.stockNum += value[4];
+          if(value[4] != 0.0 && value[5] != null){
+            lotArr.add(value[5]);
+          }
+          /*this.stockNum += value[4];*/
           hobby.add(arr);
         });
+        if(lotArr.length>0){
+          lotArr.toSet();
+          this.stockNum = lotArr.length;
+        }
         setState(() {
           EasyLoading.dismiss();
           this._getHobby();
@@ -156,6 +171,22 @@ class _StockPageState extends State<StockPage> {
         });
         ToastUtil.showInfo('无数据');
       }
+  }
+  ///取小数点后几位
+// @param num 数值
+// @param location 几位
+  String formatNum(double num, int location) {
+    if ((num.toString().length - num.toString().lastIndexOf(".") - 1) <
+        location) {
+      //小数点后有几位小数
+      return num.toStringAsFixed(location)
+          .substring(0, num.toString().lastIndexOf(".") + location + 1)
+          .toString();
+    } else {
+      return num.toString()
+          .substring(0, num.toString().lastIndexOf(".") + location + 1)
+          .toString();
+    }
   }
 
   void _onEvent(event) async {
@@ -229,33 +260,35 @@ class _StockPageState extends State<StockPage> {
     for (int i = 0; i < this.hobby.length; i++) {
       List<Widget> comList = [];
       for (int j = 0; j < this.hobby[i].length; j++) {
-        comList.add(
-          Column(children: [
-            Container(
-              color: Colors.white,
-              child: ListTile(
-                title: Text(this.hobby[i][j]["title"] +
-                    '：' +
-                    this.hobby[i][j]["value"]["label"].toString()),
-                trailing:
-                Row(mainAxisSize: MainAxisSize.min, children: <Widget>[
-                  /* MyText(orderDate[i][j],
+        if (!this.hobby[i][j]['isHide']) {
+          comList.add(
+            Column(children: [
+              Container(
+                color: Colors.white,
+                child: ListTile(
+                  title: Text(this.hobby[i][j]["title"] +
+                      '：' +
+                      this.hobby[i][j]["value"]["label"].toString()),
+                  trailing:
+                  Row(mainAxisSize: MainAxisSize.min, children: <Widget>[
+                    /* MyText(orderDate[i][j],
                         color: Colors.grey, rightpadding: 18),*/
-                ]),
+                  ]),
+                ),
               ),
+              divider,
+            ]),
+          );
+          tempList.add(
+            SizedBox(height: 10),
+          );
+          tempList.add(
+            Column(
+              children: comList,
             ),
-            divider,
-          ]),
-        );
+          );
+        }
       }
-      tempList.add(
-        SizedBox(height: 10),
-      );
-      tempList.add(
-        Column(
-          children: comList,
-        ),
-      );
     }
     return tempList;
   }
@@ -395,7 +428,8 @@ class _StockPageState extends State<StockPage> {
                                     flex: 1,
                                     child: _item('仓库',  this.stockList, this.stockName,
                                         'stock'),
-                                  ),Expanded(
+                                  ),
+                                  Expanded(
                                     flex: 1,
                                     child: Container(
                                         padding: EdgeInsets.all(6.0),

@@ -164,12 +164,14 @@ class _RetrievalDetailState extends State<RetrievalDetail> {
   List hobby = [];
 
   getOrderList() async {
+    SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+    var fStaffNumber = sharedPreferences.getString('FStaffNumber');
     EasyLoading.show(status: 'loading...');
     Map<String, dynamic> userMap = Map();
     userMap['FilterString'] = "fBillNo='$fBillNo'";
-    userMap['FormId'] = 'SAL_DELIVERYNOTICE';
+    userMap['FormId'] = 'SAL_SaleOrder';
     userMap['FieldKeys'] =
-        'FBillNo,FSaleOrgId.FNumber,FSaleOrgId.FName,FDate,FEntity_FEntryId,FMaterialId.FNumber,FMaterialId.FName,FMaterialId.FSpecification,FDeliveryOrgID.FNumber,FDeliveryOrgID.FName,FUnitId.FNumber,FUnitId.FName,FQty,FDeliveryDate,FRemainOutQty,FID,FCustomerID.FNumber,FCustomerID.FName,FStockID.FName,FStockID.FNumber,FLot.FNumber,FStockID.FIsOpenLocation,FMaterialId.FIsBatchManage,F_VBMY_Text,F_VBMY_Text1,F_VBMY_Text11,FTaxPrice,FEntryTaxRate';
+        'FBillNo,FSaleOrgId.FNumber,FSaleOrgId.FName,FDate,FSaleOrderEntry_FEntryId,FMaterialId.FNumber,FMaterialId.FName,FMaterialId.FSpecification,FCorrespondOrgId.FNumber,FCorrespondOrgId.FName,FUnitId.FNumber,FUnitId.FName,FQty,FDeliveryDate,FRemainOutQty,FID,FCustId.FNumber,FCustId.FName,FStockID.FName,FStockID.FNumber,FLot.FNumber,FStockID.FIsOpenLocation,FMaterialId.FIsBatchManage,F_TLWD_Text,F_VBMY_Text1,F_VBMY_Text11,FTaxPrice,FEntryTaxRate';
     Map<String, dynamic> dataMap = Map();
     dataMap['data'] = userMap;
     String order = await CurrencyEntity.polling(dataMap);
@@ -195,8 +197,8 @@ class _RetrievalDetailState extends State<RetrievalDetail> {
       this.cusName = orderDate[0][17];
       this.fOrgID = orderDate[0][8];
       this.F_VBMY_Text1 = orderDate[0][23];
-      this.F_VBMY_Text2 = orderDate[0][24];
-      this.F_VBMY_Text3 = orderDate[0][25];
+      this.F_VBMY_Text2 = sharedPreferences.getString('F_VBMY_Text');
+      this.F_VBMY_Text3 = sharedPreferences.getString('F_VBMY_Text1');
       hobby = [];
       orderDate.forEach((value) {
         List arr = [];
@@ -252,7 +254,7 @@ class _RetrievalDetailState extends State<RetrievalDetail> {
           "title": "数量",
           "name": "FBaseQty",
           "isHide": false,
-          "value": {"label": "0", "value": "0"}
+          "value": {"label": "1", "value": "1"}
         });
         arr.add({
           "title": "要货日期",
@@ -260,12 +262,21 @@ class _RetrievalDetailState extends State<RetrievalDetail> {
           "isHide": true,
           "value": {"label": value[13], "value": value[13]}
         });
-        arr.add({
-          "title": "仓库",
-          "name": "FStockId",
-          "isHide": false,
-          "value": {"label": value[18] == null ?"库存商品":value[18], "value": value[19] == null ?"CK018":value[19]}
-        });
+        if(fStaffNumber == "Z090"){
+          arr.add({
+            "title": "仓库",
+            "name": "FStockId",
+            "isHide": false,
+            "value": {"label": "库存商品", "value": "CK017"}
+          });
+        }else{
+          arr.add({
+            "title": "仓库",
+            "name": "FStockId",
+            "isHide": false,
+            "value": {"label": value[18] == null ?"库存商品":value[18], "value": value[19] == null ?"CK017":value[19]}
+          });
+        }
         arr.add({
           "title": "批号",
           "name": "FLot",
@@ -329,6 +340,7 @@ class _RetrievalDetailState extends State<RetrievalDetail> {
     Map<String, dynamic> userMap = Map();
     SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
     var menuData = sharedPreferences.getString('MenuPermissions');
+    var fStaffNumber = sharedPreferences.getString('FStaffNumber');
     var deptData = jsonDecode(menuData)[0];
     var scanCode = _code.split(",");
     userMap['FilterString'] = "FNumber='" +
@@ -481,12 +493,21 @@ class _RetrievalDetailState extends State<RetrievalDetail> {
             "isHide": true,
             "value": {"label": "", "value": ""}
           });
-          arr.add({
-            "title": "仓库",
-            "name": "FStockID",
-            "isHide": false,
-            "value": {"label": "", "value": ""}
-          });
+          if(fStaffNumber == "Z090"){
+            arr.add({
+              "title": "仓库",
+              "name": "FStockId",
+              "isHide": false,
+              "value": {"label": "库存商品", "value": "CK017"}
+            });
+          }else{
+            arr.add({
+              "title": "仓库",
+              "name": "FStockID",
+              "isHide": false,
+              "value": {"label": "", "value": ""}
+            });
+          }
           arr.add({
             "title": "批号",
             "name": "FLot",
@@ -953,6 +974,7 @@ class _RetrievalDetailState extends State<RetrievalDetail> {
           /*FEntityItem['FReturnType'] = 1;*/
           FEntityItem['FLot'] = {"FNumber": element[11]['value']['value']};
           FEntityItem['FStockID'] = {"FNumber": element[10]['value']['value']};
+          FEntityItem['FStockStatusId'] = {"FNumber": "KCZT01_SYS"};
           FEntityItem['FStockLocId'] = {
             "FSTOCKLOCID__FF100011": {"FNumber": element[13]['value']['value']}
           };
@@ -1000,6 +1022,8 @@ class _RetrievalDetailState extends State<RetrievalDetail> {
                     SubmitEntity.audit(submitMap))
                 .then((auditResult) {
               if (auditResult) {
+                sharedPreferences.setString('F_VBMY_Text', this.F_VBMY_Text2);
+                sharedPreferences.setString('F_VBMY_Text1', this.F_VBMY_Text3);
                 //提交清空页面
                 setState(() {
                   this.hobby = [];
@@ -1103,6 +1127,11 @@ class _RetrievalDetailState extends State<RetrievalDetail> {
                                   tooltip: '输入',
                                   onPressed: () {
                                     checkItem = 'F_VBMY_Text1';
+                                    this._textNumber.clear();
+                                    this._textNumber.value = _textNumber.value.copyWith(
+                                      text:
+                                      F_VBMY_Text1,
+                                    );
                                     scanDialog();
                                   },
                                 ),
@@ -1123,6 +1152,11 @@ class _RetrievalDetailState extends State<RetrievalDetail> {
                                   tooltip: '输入',
                                   onPressed: () {
                                     checkItem = 'F_VBMY_Text2';
+                                    this._textNumber.clear();
+                                    this._textNumber.value = _textNumber.value.copyWith(
+                                      text:
+                                      F_VBMY_Text2,
+                                    );
                                     scanDialog();
                                   },
                                 ),
@@ -1143,6 +1177,11 @@ class _RetrievalDetailState extends State<RetrievalDetail> {
                                   tooltip: '输入',
                                   onPressed: () {
                                     checkItem = 'F_VBMY_Text3';
+                                    this._textNumber.clear();
+                                    this._textNumber.value = _textNumber.value.copyWith(
+                                      text:
+                                      F_VBMY_Text3,
+                                    );
                                     scanDialog();
                                   },
                                 ),

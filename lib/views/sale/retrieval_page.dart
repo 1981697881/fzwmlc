@@ -82,7 +82,7 @@ class _RetrievalPageState extends State<RetrievalPage> {
     userMap['FilterString'] = "FRemainOutQty>0";
     var scanCode = keyWord.split(",");
     if(isScan){
-      userMap['FilterString'] = "F_VBMY_Text='" + scanCode[0] + "' and FCLOSESTATUS='A' and FRemainOutQty>0";
+      userMap['FilterString'] = "F_TLWD_Text='" + scanCode[1] + "' and FCLOSESTATUS='A' and FRemainOutQty>0";
     }else{
       if (this._dateSelectText != "") {
         this.startDate = this._dateSelectText.substring(0, 10);
@@ -91,12 +91,12 @@ class _RetrievalPageState extends State<RetrievalPage> {
         "FRemainOutQty>0 and FCLOSESTATUS='A' and FDate>= '$startDate' and FDate <= '$endDate'";
       }
       if (this.keyWord != '') {
-        userMap['FilterString'] = "F_VBMY_Text='" + scanCode[0] + "' and FCLOSESTATUS='A' and FRemainOutQty>0 and FDate>= '$startDate' and FDate <= '$endDate'";
+        userMap['FilterString'] = "F_TLWD_Text='" + scanCode[1] + "' and FCLOSESTATUS='A' and FRemainOutQty>0 and FDate>= '$startDate' and FDate <= '$endDate'";
       }
     }
-    userMap['FormId'] = 'SAL_DELIVERYNOTICE';
+    userMap['FormId'] = 'SAL_SaleOrder';
     userMap['FieldKeys'] =
-        'FBillNo,FSaleOrgId.FNumber,FSaleOrgId.FName,FDate,FEntity_FEntryId,FMaterialId.FNumber,FMaterialId.FName,FMaterialId.FSpecification,FDeliveryOrgID.FNumber,FDeliveryOrgID.FName,FUnitId.FNumber,FUnitId.FName,FQty,FDeliveryDate,FRemainOutQty,FID,,FCustomerID.FNumber,FCustomerID.FName';
+        'FBillNo,FSaleOrgId.FNumber,FSaleOrgId.FName,FDate,FSaleOrderEntry_FEntryId,FMaterialId.FNumber,FMaterialId.FName,FMaterialId.FSpecification,FCorrespondOrgId.FNumber,FCorrespondOrgId.FName,FUnitId.FNumber,FUnitId.FName,FQty,FDeliveryDate,FRemainOutQty,FID,,FCustId.FNumber,FCustId.FName';
     Map<String, dynamic> dataMap = Map();
     dataMap['data'] = userMap;
     String order = await CurrencyEntity.polling(dataMap);
