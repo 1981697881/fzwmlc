@@ -171,7 +171,7 @@ class _RetrievalDetailState extends State<RetrievalDetail> {
     userMap['FilterString'] = "fBillNo='$fBillNo'";
     userMap['FormId'] = 'SAL_SaleOrder';
     userMap['FieldKeys'] =
-        'FBillNo,FSaleOrgId.FNumber,FSaleOrgId.FName,FDate,FSaleOrderEntry_FEntryId,FMaterialId.FNumber,FMaterialId.FName,FMaterialId.FSpecification,FCorrespondOrgId.FNumber,FCorrespondOrgId.FName,FUnitId.FNumber,FUnitId.FName,FQty,FDeliveryDate,FRemainOutQty,FID,FCustId.FNumber,FCustId.FName,FStockID.FName,FStockID.FNumber,FLot.FNumber,FStockID.FIsOpenLocation,FMaterialId.FIsBatchManage,F_TLWD_Text,F_VBMY_Text1,F_VBMY_Text11,FTaxPrice,FEntryTaxRate';
+        'FBillNo,FSaleOrgId.FNumber,FSaleOrgId.FName,FDate,FSaleOrderEntry_FEntryId,FMaterialId.FNumber,FMaterialId.FName,FMaterialId.FSpecification,FCorrespondOrgId.FNumber,FCorrespondOrgId.FName,FUnitId.FNumber,FUnitId.FName,FQty,FDeliveryDate,FRemainOutQty,FID,FCustId.FNumber,FCustId.FName,FStockID.FName,FStockID.FNumber,FLot.FNumber,FStockID.FIsOpenLocation,FMaterialId.FIsBatchManage,F_TLWD_Text,F_VBMY_Text,F_VBMY_Text1,FTaxPrice,FEntryTaxRate';
     Map<String, dynamic> dataMap = Map();
     dataMap['data'] = userMap;
     String order = await CurrencyEntity.polling(dataMap);
@@ -197,8 +197,9 @@ class _RetrievalDetailState extends State<RetrievalDetail> {
       this.cusName = orderDate[0][17];
       this.fOrgID = orderDate[0][8];
       this.F_VBMY_Text1 = orderDate[0][23];
-      this.F_VBMY_Text2 = sharedPreferences.getString('F_VBMY_Text');
-      this.F_VBMY_Text3 = sharedPreferences.getString('F_VBMY_Text1');
+      print(sharedPreferences.getString('F_VBMY_Text'));
+      this.F_VBMY_Text2 = sharedPreferences.getString('F_VBMY_Text')==null?"":sharedPreferences.getString('F_VBMY_Text');
+      this.F_VBMY_Text3 = sharedPreferences.getString('F_VBMY_Text1')==null?"":sharedPreferences.getString('F_VBMY_Text1');
       hobby = [];
       orderDate.forEach((value) {
         List arr = [];
@@ -262,7 +263,7 @@ class _RetrievalDetailState extends State<RetrievalDetail> {
           "isHide": true,
           "value": {"label": value[13], "value": value[13]}
         });
-        if(fStaffNumber == "Z090"){
+        if(fStaffNumber == "Z090" || fStaffNumber == "Z069"){
           arr.add({
             "title": "仓库",
             "name": "FStockId",
@@ -493,7 +494,7 @@ class _RetrievalDetailState extends State<RetrievalDetail> {
             "isHide": true,
             "value": {"label": "", "value": ""}
           });
-          if(fStaffNumber == "Z090"){
+          if(fStaffNumber == "Z090" || fStaffNumber == "Z069"){
             arr.add({
               "title": "仓库",
               "name": "FStockId",

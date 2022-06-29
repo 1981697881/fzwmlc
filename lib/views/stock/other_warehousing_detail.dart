@@ -416,7 +416,7 @@ class _OtherWarehousingDetailState extends State<OtherWarehousingDetail> {
             "isHide": false,
             "value": {"label": "1", "value": "1"}
           });
-          if(fStaffNumber == "Z090"){
+          if(fStaffNumber == "Z090" || fStaffNumber == "Z069"){
             arr.add({
               "title": "仓库",
               "name": "FStockId",
@@ -987,7 +987,7 @@ class _OtherWarehousingDetailState extends State<OtherWarehousingDetail> {
       });
       if (FEntity.length == 0) {
         this.isSubmit = false;
-        ToastUtil.showInfo('请输入数量,仓库,入库类别');
+        ToastUtil.showInfo('请输入数量和仓库');
         return;
       }
       Model['FEntity'] = FEntity;

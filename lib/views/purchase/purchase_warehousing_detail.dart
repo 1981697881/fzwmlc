@@ -257,7 +257,7 @@ class _PurchaseWarehousingDetailState extends State<PurchaseWarehousingDetail> {
           "isHide": false,/*value[12]*/
           "value": {"label": "0", "value": "0"}
         });
-        if(fStaffNumber == "Z090"){
+        if(fStaffNumber == "Z090" || fStaffNumber == "Z069"){
           arr.add({
             "title": "仓库",
             "name": "FStockId",
@@ -421,7 +421,7 @@ class _PurchaseWarehousingDetailState extends State<PurchaseWarehousingDetail> {
             "isHide": false,
             "value": {"label": "1", "value": "1"}
           });
-          if(fStaffNumber == "Z090"){
+          if(fStaffNumber == "Z090" || fStaffNumber == "Z069"){
             arr.add({
               "title": "仓库",
               "name": "FStockId",
