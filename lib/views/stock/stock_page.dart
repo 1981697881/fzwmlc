@@ -85,18 +85,21 @@ class _StockPageState extends State<StockPage> {
   // 集合
   List hobby = [];
   getOrderList() async {
+    SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+    var menuData = sharedPreferences.getString('MenuPermissions');
+    var deptData = jsonDecode(menuData)[0];
     EasyLoading.show(status: 'loading...');
       Map<String, dynamic> userMap = Map();
       if(this.stockNumber != null && keyWord != ''){
         userMap['FilterString'] =
-        "FMaterialId.FNumber='$keyWord' and FStockId.FNumber = '$stockNumber'";
+        "FMaterialId.FNumber='$keyWord' and FStockId.FNumber = '$stockNumber' and FStockOrgId.FNumber="+deptData[1];
       }else{
         if(this.stockNumber != null){
           userMap['FilterString'] =
-          "FStockId.FNumber = '$stockNumber'";
+          "FStockId.FNumber = '$stockNumber' and FStockOrgId.FNumber="+deptData[1];
         }else{
           userMap['FilterString'] =
-          "FMaterialId.FNumber='$keyWord'";
+          "FMaterialId.FNumber='$keyWord' and FStockOrgId.FNumber="+deptData[1];
         }
       }
       userMap['FormId'] = 'STK_Inventory';

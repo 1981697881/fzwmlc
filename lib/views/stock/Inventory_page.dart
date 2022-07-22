@@ -9,6 +9,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:qrscan/qrscan.dart' as scanner;
+import 'package:shared_preferences/shared_preferences.dart';
 import 'ex_warehouse_detail.dart';
 
 class InventoryPage extends StatefulWidget {
@@ -66,16 +67,19 @@ class _InventoryPageState extends State<InventoryPage> {
   getOrderList() async {
     EasyLoading.show(status: 'loading...');
     Map<String, dynamic> userMap = Map();
-    userMap['FilterString'] = "FDocumentStatus ='A'";
+    SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+    var menuData = sharedPreferences.getString('MenuPermissions');
+    var deptData = jsonDecode(menuData)[0];
+    userMap['FilterString'] = "FDocumentStatus ='A' and FSupplierId.FNumber="+deptData[1];
     if (this._dateSelectText != "") {
       this.startDate = this._dateSelectText.substring(0, 10);
       this.endDate = this._dateSelectText.substring(26, 36);
       userMap['FilterString'] =
-      "FDocumentStatus ='A' and FDate>= '$startDate' and FDate <= '$endDate'";
+      "FDocumentStatus ='A' and FDate>= '$startDate' and FDate <= '$endDate' and FSupplierId.FNumber="+deptData[1];
     }
     if (this.keyWord != '') {
       userMap['FilterString'] =
-      "FMaterialId.FNumber='$keyWord' and FDocumentStatus ='A' and FDate>= '$startDate' and FDate <= '$endDate'";
+      "FMaterialId.FNumber='$keyWord' and FDocumentStatus ='A' and FDate>= '$startDate' and FDate <= '$endDate' and FSupplierId.FNumber="+deptData[1];
     }
     userMap['FormId'] = 'STK_StockCountScheme';
     userMap['FieldKeys'] =

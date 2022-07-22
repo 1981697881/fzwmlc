@@ -11,6 +11,7 @@ import 'dart:io';
 import 'package:flutter/cupertino.dart';
 import 'package:fzwmlc/views/sale/return_goods_detail.dart';
 import 'package:qrscan/qrscan.dart' as scanner;
+import 'package:shared_preferences/shared_preferences.dart';
 
 final String _fontFamily = Platform.isWindows ? "Roboto" : "";
 
@@ -68,18 +69,21 @@ class _ReturnGoodsPageState extends State<ReturnGoodsPage> {
   getOrderList() async {
     EasyLoading.show(status: 'loading...');
     Map<String, dynamic> userMap = Map();
-    userMap['FilterString'] = "FJoinRetQty>0";
+    SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+    var menuData = sharedPreferences.getString('MenuPermissions');
+    var deptData = jsonDecode(menuData)[0];
+    userMap['FilterString'] = "FJoinRetQty>0 and FSaleOrgId.FNumber="+deptData[1];
     var scanCode = keyWord.split(",");
     if(isScan){
-      userMap['FilterString'] = "FBillNo='"+scanCode[0]+"' and FBillCloseStatus ='A'";
+      userMap['FilterString'] = "FBillNo='"+scanCode[0]+"' and FBillCloseStatus ='A' and FSaleOrgId.FNumber="+deptData[1];
     }else{
       if(this._dateSelectText != ""){
         this.startDate = this._dateSelectText.substring(0,10);
         this.endDate = this._dateSelectText.substring(26,36);
-        userMap['FilterString'] = "FBillCloseStatus ='A' and FDate>= '$startDate' and FDate <= '$endDate'";
+        userMap['FilterString'] = "FBillCloseStatus ='A' and FDate>= '$startDate' and FDate <= '$endDate' and FSaleOrgId.FNumber="+deptData[1];
       }
       if (this.keyWord != '') {
-        userMap['FilterString'] = "FBillNo='"+scanCode[0]+"' and FBillCloseStatus ='A' and FDate>= '$startDate' and FDate <= '$endDate'";
+        userMap['FilterString'] = "FBillNo='"+scanCode[0]+"' and FBillCloseStatus ='A' and FDate>= '$startDate' and FDate <= '$endDate' and FSaleOrgId.FNumber="+deptData[1];
       }
     }
     userMap['FormId'] = 'SAL_RETURNNOTICE';

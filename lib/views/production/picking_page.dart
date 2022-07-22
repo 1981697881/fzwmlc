@@ -84,18 +84,21 @@ class _PickingPageState extends State<PickingPage> {
       hobby = [];
       this._getHobby();
     });
+    SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+    var menuData = sharedPreferences.getString('MenuPermissions');
+    var deptData = jsonDecode(menuData)[0];
     Map<String, dynamic> userMap = Map();
-    userMap['FilterString'] = "FNoStockInQty>0";
+    userMap['FilterString'] = "FNoStockInQty>0 and FPrdOrgId.FNumber="+deptData[1];
     if (this._dateSelectText != "") {
       this.startDate = this._dateSelectText.substring(0, 10);
       this.endDate = this._dateSelectText.substring(26, 36);
     }
     userMap['FilterString'] =
-    "FStatus in (3) and FNoStockInQty>0 and FDate>= '$startDate' and FDate <= '$endDate'";
+    "FStatus in (3) and FNoStockInQty>0 and FDate>= '$startDate' and FDate <= '$endDate' and FPrdOrgId.FNumber="+deptData[1];
     var scanCode = keyWord.split(",");
     if(this.keyWord != ''){
       userMap['FilterString'] =
-      "FSaleOrderNo='"+scanCode[0]+"' and FStatus in (3) and FNoStockInQty>0 and FDate>= '$startDate' and FDate <= '$endDate'";
+      "FSaleOrderNo='"+scanCode[0]+"' and FStatus in (3) and FNoStockInQty>0 and FDate>= '$startDate' and FDate <= '$endDate' and FPrdOrgId.FNumber="+deptData[1];
     }
     userMap['FormId'] = 'PRD_MO';
     userMap['FieldKeys'] =

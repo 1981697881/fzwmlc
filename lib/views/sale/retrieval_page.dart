@@ -11,6 +11,7 @@ import 'dart:io';
 import 'package:flutter/cupertino.dart';
 import 'package:fzwmlc/views/sale/retrieval_detail.dart';
 import 'package:qrscan/qrscan.dart' as scanner;
+import 'package:shared_preferences/shared_preferences.dart';
 
 final String _fontFamily = Platform.isWindows ? "Roboto" : "";
 
@@ -79,19 +80,22 @@ class _RetrievalPageState extends State<RetrievalPage> {
   getOrderList() async {
     EasyLoading.show(status: 'loading...');
     Map<String, dynamic> userMap = Map();
-    userMap['FilterString'] = "FRemainOutQty>0";
+    SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+    var menuData = sharedPreferences.getString('MenuPermissions');
+    var deptData = jsonDecode(menuData)[0];
+    userMap['FilterString'] = "FRemainOutQty>0 and FSaleOrgId.FNumber="+deptData[1];
     var scanCode = keyWord.split(",");
     if(isScan){
-      userMap['FilterString'] = "F_TLWD_Text='" + scanCode[1] + "' and FCLOSESTATUS='A' and FRemainOutQty>0";
+      userMap['FilterString'] = "F_TLWD_Text='" + scanCode[1] + "' and FCLOSESTATUS='A' and FRemainOutQty>0 and FSaleOrgId.FNumber="+deptData[1];
     }else{
       if (this._dateSelectText != "") {
         this.startDate = this._dateSelectText.substring(0, 10);
         this.endDate = this._dateSelectText.substring(26, 36);
         userMap['FilterString'] =
-        "FRemainOutQty>0 and FCLOSESTATUS='A' and FDate>= '$startDate' and FDate <= '$endDate'";
+        "FRemainOutQty>0 and FCLOSESTATUS='A' and FDate>= '$startDate' and FDate <= '$endDate' and FSaleOrgId.FNumber="+deptData[1];
       }
       if (this.keyWord != '') {
-        userMap['FilterString'] = "F_TLWD_Text='" + scanCode[1] + "' and FCLOSESTATUS='A' and FRemainOutQty>0 and FDate>= '$startDate' and FDate <= '$endDate'";
+        userMap['FilterString'] = "F_TLWD_Text='" + scanCode[1] + "' and FCLOSESTATUS='A' and FRemainOutQty>0 and FDate>= '$startDate' and FDate <= '$endDate' and FSaleOrgId.FNumber="+deptData[1];
       }
     }
     userMap['FormId'] = 'SAL_SaleOrder';
@@ -226,7 +230,7 @@ class _RetrievalPageState extends State<RetrievalPage> {
                       Future.delayed(const Duration(milliseconds: 500), () {
                         setState(() {
                           //延时更新状态
-                          this.getOrderList();
+                          this._initState();
                         });
                       });
                     });
@@ -277,7 +281,7 @@ class _RetrievalPageState extends State<RetrievalPage> {
   void showDateSelect() async {
     //获取当前的时间
     DateTime dateTime = DateTime.now().add(Duration(days: -30));
-    DateTime now = DateTime.now();;
+    DateTime now = DateTime.now();
     DateTime start = DateTime(dateTime.year, dateTime.month, dateTime.day);
     //在当前的时间上多添加4天
     DateTime end = DateTime(now.year, now.month, now.day);

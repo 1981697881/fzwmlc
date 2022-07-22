@@ -9,6 +9,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:qrscan/qrscan.dart' as scanner;
+import 'package:shared_preferences/shared_preferences.dart';
 import 'purchase_warehousing_detail.dart';
 
 class PurchaseWarehousingPage extends StatefulWidget {
@@ -67,21 +68,24 @@ class _PurchaseWarehousingPageState extends State<PurchaseWarehousingPage> {
   getOrderList() async {
     EasyLoading.show(status: 'loading...');
     Map<String, dynamic> userMap = Map();
-    userMap['FilterString'] = "FInStockQty >0";
+    SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+    var menuData = sharedPreferences.getString('MenuPermissions');
+    var deptData = jsonDecode(menuData)[0];
+    userMap['FilterString'] = "FInStockQty >0 and FSupplierId.FNumber="+deptData[1];
     var scanCode = keyWord.split(",");
     if(isScan){
       userMap['FilterString'] =
-      "FBillNo='"+scanCode[0]+"' and FCloseStatus = 'A'";
+      "FBillNo='"+scanCode[0]+"' and FCloseStatus = 'A' and FSupplierId.FNumber="+deptData[1];
     }else{
       if (this._dateSelectText != "") {
         this.startDate = this._dateSelectText.substring(0, 10);
         this.endDate = this._dateSelectText.substring(26, 36);
         userMap['FilterString'] =
-        "FDate>= '$startDate' and FCloseStatus = 'A' and FDate <= '$endDate'";
+        "FDate>= '$startDate' and FCloseStatus = 'A' and FDate <= '$endDate' and FSupplierId.FNumber="+deptData[1];
       }
       if (this.keyWord != '') {
         userMap['FilterString'] =/*and FInStockQty>0*/
-        "FBillNo='"+scanCode[0]+"' and FCloseStatus = 'A' and FDate>= '$startDate' and FDate <= '$endDate'";
+        "FBillNo='"+scanCode[0]+"' and FCloseStatus = 'A' and FDate>= '$startDate' and FDate <= '$endDate' and FSupplierId.FNumber="+deptData[1];
       }
     }
 

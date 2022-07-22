@@ -4,7 +4,6 @@ import 'package:fzwmlc/model/currency_entity.dart';
 import 'package:fzwmlc/model/submit_entity.dart';
 import 'package:fzwmlc/utils/handler_order.dart';
 import 'package:fzwmlc/utils/refresh_widget.dart';
-import 'package:fzwmlc/utils/text.dart';
 import 'package:fzwmlc/utils/toast_util.dart';
 import 'package:flutter/material.dart';
 import 'dart:async';
@@ -22,12 +21,9 @@ import 'package:fzwmlc/components/my_text.dart';
 import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-final String _fontFamily = Platform.isWindows ? "Roboto" : "";
-
 class RetrievalDetail extends StatefulWidget {
   var FBillNo;
-
-  RetrievalDetail({Key ?key, @required this.FBillNo}) : super(key: key);
+  RetrievalDetail({Key? key, @required this.FBillNo}) : super(key: key);
 
   @override
   _RetrievalDetailState createState() => _RetrievalDetailState(FBillNo);
@@ -38,8 +34,8 @@ class _RetrievalDetailState extends State<RetrievalDetail> {
   var F_VBMY_Text1;
   var F_VBMY_Text2;
   var F_VBMY_Text3;
+  var F_VBMY_Text4 = "";
   GlobalKey<PartRefreshWidgetState> globalKey = GlobalKey();
-  GlobalKey<TextWidgetState> textKey = GlobalKey();
   final _textNumber = TextEditingController();
   var checkItem;
   String FBillNo = '';
@@ -67,10 +63,9 @@ class _RetrievalDetailState extends State<RetrievalDetail> {
   List<dynamic> materialDate = [];
   final divider = Divider(height: 1, indent: 20);
   final rightIcon = Icon(Icons.keyboard_arrow_right);
-  final scanIcon = Icon(Icons.filter_center_focus);
   static const scannerPlugin =
       const EventChannel('com.shinow.pda_scanner/plugin');
-  StreamSubscription ?_subscription;
+  StreamSubscription? _subscription;
   var _code;
   var _FNumber;
   var fBillNo;
@@ -177,7 +172,6 @@ class _RetrievalDetailState extends State<RetrievalDetail> {
     String order = await CurrencyEntity.polling(dataMap);
     orderDate = [];
     orderDate = jsonDecode(order);
-    DateTime dateTime = DateTime.now();
     FDate = formatDate(DateTime.now(), [
       yyyy,
       "-",
@@ -198,8 +192,12 @@ class _RetrievalDetailState extends State<RetrievalDetail> {
       this.fOrgID = orderDate[0][8];
       this.F_VBMY_Text1 = orderDate[0][23];
       print(sharedPreferences.getString('F_VBMY_Text'));
-      this.F_VBMY_Text2 = sharedPreferences.getString('F_VBMY_Text')==null?"":sharedPreferences.getString('F_VBMY_Text');
-      this.F_VBMY_Text3 = sharedPreferences.getString('F_VBMY_Text1')==null?"":sharedPreferences.getString('F_VBMY_Text1');
+      this.F_VBMY_Text2 = sharedPreferences.getString('F_VBMY_Text') == null
+          ? ""
+          : sharedPreferences.getString('F_VBMY_Text');
+      this.F_VBMY_Text3 = sharedPreferences.getString('F_VBMY_Text1') == null
+          ? ""
+          : sharedPreferences.getString('F_VBMY_Text1');
       hobby = [];
       orderDate.forEach((value) {
         List arr = [];
@@ -263,26 +261,36 @@ class _RetrievalDetailState extends State<RetrievalDetail> {
           "isHide": true,
           "value": {"label": value[13], "value": value[13]}
         });
-        if(fStaffNumber == "Z090" || fStaffNumber == "Z069"){
+        if (fStaffNumber == "Z090" || fStaffNumber == "Z069") {
           arr.add({
             "title": "仓库",
             "name": "FStockId",
             "isHide": false,
             "value": {"label": "库存商品", "value": "CK017"}
           });
-        }else{
+        } else if(fStaffNumber == "Z005"){
           arr.add({
             "title": "仓库",
             "name": "FStockId",
             "isHide": false,
-            "value": {"label": value[18] == null ?"库存商品":value[18], "value": value[19] == null ?"CK017":value[19]}
+            "value": {"label": "总仓", "value": "CK001"}
+          });
+        }else {
+          arr.add({
+            "title": "仓库",
+            "name": "FStockId",
+            "isHide": false,
+            "value": {
+              "label": value[18] == null ? "库存商品" : value[18],
+              "value": value[19] == null ? "CK017" : value[19]
+            }
           });
         }
         arr.add({
           "title": "批号",
           "name": "FLot",
           "isHide": value[22] != true,
-          "value": {"label": value[23], "value": value[23]}
+          "value": {"label": value[22] ? value[23] : '', "value": value[22] ? value[23] : ''}
         });
         arr.add({
           "title": "仓位",
@@ -323,6 +331,14 @@ class _RetrievalDetailState extends State<RetrievalDetail> {
           this.hobby[checkData][checkDataChild]["value"]["label"] = _code;
           this.hobby[checkData][checkDataChild]['value']["value"] = _code;
         });
+        checkItem = "";
+        break;
+      case 'F_VBMY_Text4':
+        this._textNumber.text = _code;
+        setState(() {
+          this.F_VBMY_Text4 =  _code;
+        });
+        Navigator.pop(context);
         checkItem = "";
         break;
       default:
@@ -494,14 +510,21 @@ class _RetrievalDetailState extends State<RetrievalDetail> {
             "isHide": true,
             "value": {"label": "", "value": ""}
           });
-          if(fStaffNumber == "Z090" || fStaffNumber == "Z069"){
+          if (fStaffNumber == "Z090" || fStaffNumber == "Z069") {
             arr.add({
               "title": "仓库",
               "name": "FStockId",
               "isHide": false,
               "value": {"label": "库存商品", "value": "CK017"}
             });
-          }else{
+          } else if(fStaffNumber == "Z005"){
+            arr.add({
+              "title": "仓库",
+              "name": "FStockId",
+              "isHide": false,
+              "value": {"label": "总仓", "value": "CK001"}
+            });
+          }else {
             arr.add({
               "title": "仓库",
               "name": "FStockID",
@@ -546,7 +569,7 @@ class _RetrievalDetailState extends State<RetrievalDetail> {
     }
   }
 
-  Widget _item(title, var data, selectData, hobby, {String ?label, var stock}) {
+  Widget _item(title, var data, selectData, hobby, {String? label, var stock}) {
     if (selectData == null) {
       selectData = "";
     }
@@ -556,7 +579,10 @@ class _RetrievalDetailState extends State<RetrievalDetail> {
           color: Colors.white,
           child: ListTile(
             title: Text(title),
-            onTap: () => data.length>0?_onClickItem(data, selectData, hobby, label: label,stock: stock):{ToastUtil.showInfo('无数据')},
+            onTap: () => data.length > 0
+                ? _onClickItem(data, selectData, hobby,
+                    label: label, stock: stock)
+                : {ToastUtil.showInfo('无数据')},
             trailing: Row(mainAxisSize: MainAxisSize.min, children: <Widget>[
               MyText(selectData.toString() == "" ? '暂无' : selectData.toString(),
                   color: Colors.grey, rightpadding: 18),
@@ -645,7 +671,7 @@ class _RetrievalDetailState extends State<RetrievalDetail> {
   }
 
   void _onClickItem(var data, var selectData, hobby,
-      {String ?label, var stock}) {
+      {String? label, var stock}) {
     Pickers.showSinglePicker(
       context,
       data: data,
@@ -889,17 +915,19 @@ class _RetrievalDetailState extends State<RetrievalDetail> {
                           // 关闭 Dialog
                           Navigator.pop(context);
                           setState(() {
-                            if(checkItem == "F_VBMY_Text1"){
+                            if (checkItem == "F_VBMY_Text1") {
                               F_VBMY_Text1 = _FNumber;
-                            }else if(checkItem == "F_VBMY_Text2"){
+                            } else if (checkItem == "F_VBMY_Text2") {
                               F_VBMY_Text2 = _FNumber;
-                            }else if(checkItem == "F_VBMY_Text3"){
+                            } else if (checkItem == "F_VBMY_Text4") {
+                              F_VBMY_Text4 = _FNumber;
+                            } else if (checkItem == "F_VBMY_Text3") {
                               F_VBMY_Text3 = _FNumber;
-                            }else{
+                            } else {
                               this.hobby[checkData][checkDataChild]["value"]
-                              ["label"] = _FNumber;
+                                  ["label"] = _FNumber;
                               this.hobby[checkData][checkDataChild]['value']
-                              ["value"] = _FNumber;
+                                  ["value"] = _FNumber;
                             }
                             checkItem = "";
                           });
@@ -950,6 +978,7 @@ class _RetrievalDetailState extends State<RetrievalDetail> {
         Model['F_TLWD_Text'] = this.F_VBMY_Text1;
         Model['F_VBMY_Text'] = this.F_VBMY_Text2;
         Model['F_VBMY_Text1'] = this.F_VBMY_Text3;
+        Model['F_VBMY_Text2'] = this.F_VBMY_Text4;
       } else {
         if (this.customerNumber == null) {
           this.isSubmit = false;
@@ -1129,9 +1158,34 @@ class _RetrievalDetailState extends State<RetrievalDetail> {
                                   onPressed: () {
                                     checkItem = 'F_VBMY_Text1';
                                     this._textNumber.clear();
-                                    this._textNumber.value = _textNumber.value.copyWith(
-                                      text:
-                                      F_VBMY_Text1,
+                                    this._textNumber.value =
+                                        _textNumber.value.copyWith(
+                                      text: F_VBMY_Text1,
+                                    );
+                                    scanDialog();
+                                  },
+                                ),
+                              ])),
+                    ),
+                    divider,
+                  ]),
+                  Column(children: [
+                    Container(
+                      color: Colors.white,
+                      child: ListTile(
+                          title: Text("运单号：$F_VBMY_Text4"),
+                          trailing: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: <Widget>[
+                                IconButton(
+                                  icon: new Icon(Icons.create),
+                                  tooltip: '输入',
+                                  onPressed: () {
+                                    checkItem = 'F_VBMY_Text4';
+                                    this._textNumber.clear();
+                                    this._textNumber.value =
+                                        _textNumber.value.copyWith(
+                                      text: F_VBMY_Text4,
                                     );
                                     scanDialog();
                                   },
@@ -1154,9 +1208,9 @@ class _RetrievalDetailState extends State<RetrievalDetail> {
                                   onPressed: () {
                                     checkItem = 'F_VBMY_Text2';
                                     this._textNumber.clear();
-                                    this._textNumber.value = _textNumber.value.copyWith(
-                                      text:
-                                      F_VBMY_Text2,
+                                    this._textNumber.value =
+                                        _textNumber.value.copyWith(
+                                      text: F_VBMY_Text2,
                                     );
                                     scanDialog();
                                   },
@@ -1179,9 +1233,9 @@ class _RetrievalDetailState extends State<RetrievalDetail> {
                                   onPressed: () {
                                     checkItem = 'F_VBMY_Text3';
                                     this._textNumber.clear();
-                                    this._textNumber.value = _textNumber.value.copyWith(
-                                      text:
-                                      F_VBMY_Text3,
+                                    this._textNumber.value =
+                                        _textNumber.value.copyWith(
+                                      text: F_VBMY_Text3,
                                     );
                                     scanDialog();
                                   },

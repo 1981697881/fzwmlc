@@ -11,6 +11,7 @@ import 'dart:io';
 import 'package:flutter/cupertino.dart';
 import 'package:fzwmlc/views/sale/retrieval_detail.dart';
 import 'package:qrscan/qrscan.dart' as scanner;
+import 'package:shared_preferences/shared_preferences.dart';
 
 import 'dispatch_detail.dart';
 
@@ -76,18 +77,21 @@ class _DispatchPageState extends State<DispatchPage> {
   List hobby = [];
 
   getOrderList() async {
+    SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+    var menuData = sharedPreferences.getString('MenuPermissions');
+    var deptData = jsonDecode(menuData)[0];
     EasyLoading.show(status: 'loading...');
     Map<String, dynamic> userMap = Map();
-    userMap['FilterString'] = "FPlanQty >0";
+    userMap['FilterString'] = "FPlanQty >0 and FCreateOrgId.FNumber="+deptData[1];
     if (this._dateSelectText != "") {
       this.startDate = this._dateSelectText.substring(0, 10);
       this.endDate = this._dateSelectText.substring(26, 36);
       userMap['FilterString'] =
-      "FUnOrderQty >0 and FDate>= '$startDate' and FDate <= '$endDate'";
+      "FUnOrderQty >0 and FDate>= '$startDate' and FDate <= '$endDate' and FCreateOrgId.FNumber="+deptData[1];
     }
     if (this.keyWord != '') {
       userMap['FilterString'] =
-      "FBillNo='$keyWord' and FUnOrderQty >0 and FDate>= '$startDate' and FDate <= '$endDate'";
+      "FBillNo='$keyWord' and FUnOrderQty >0 and FDate>= '$startDate' and FDate <= '$endDate' and FCreateOrgId.FNumber="+deptData[1];
     }
     userMap['FormId'] = 'k9917093a9fd147b7a68c76f6780b8593';
     userMap['FieldKeys'] =

@@ -264,6 +264,13 @@ class _PurchaseWarehousingDetailState extends State<PurchaseWarehousingDetail> {
             "isHide": false,
             "value": {"label": "库存商品", "value": "CK017"}
           });
+        }else if(fStaffNumber == "Z005"){
+          arr.add({
+            "title": "仓库",
+            "name": "FStockId",
+            "isHide": false,
+            "value": {"label": "总仓", "value": "CK001"}
+          });
         }else{
           arr.add({
             "title": "仓库",
@@ -427,6 +434,13 @@ class _PurchaseWarehousingDetailState extends State<PurchaseWarehousingDetail> {
               "name": "FStockId",
               "isHide": false,
               "value": {"label": "库存商品", "value": "CK017"}
+            });
+          }else if(fStaffNumber == "Z005"){
+            arr.add({
+              "title": "仓库",
+              "name": "FStockId",
+              "isHide": false,
+              "value": {"label": "总仓", "value": "CK001"}
             });
           }else{
             arr.add({
