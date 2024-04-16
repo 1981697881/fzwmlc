@@ -166,7 +166,7 @@ class _RetrievalDetailState extends State<RetrievalDetail> {
     userMap['FilterString'] = "fBillNo='$fBillNo'";
     userMap['FormId'] = 'SAL_SaleOrder';
     userMap['FieldKeys'] =
-        'FBillNo,FSaleOrgId.FNumber,FSaleOrgId.FName,FDate,FSaleOrderEntry_FEntryId,FMaterialId.FNumber,FMaterialId.FName,FMaterialId.FSpecification,FCorrespondOrgId.FNumber,FCorrespondOrgId.FName,FUnitId.FNumber,FUnitId.FName,FQty,FDeliveryDate,FRemainOutQty,FID,FCustId.FNumber,FCustId.FName,FStockID.FName,FStockID.FNumber,FLot.FNumber,FStockID.FIsOpenLocation,FMaterialId.FIsBatchManage,F_TLWD_Text,F_VBMY_Text,F_VBMY_Text1,FTaxPrice,FEntryTaxRate';
+        'FBillNo,FSaleOrgId.FNumber,FSaleOrgId.FName,FDate,FSaleOrderEntry_FEntryId,FMaterialId.FNumber,FMaterialId.FName,FMaterialId.FSpecification,FCorrespondOrgId.FNumber,FCorrespondOrgId.FName,FUnitId.FNumber,FUnitId.FName,FQty,FDeliveryDate,FRemainOutQty,FID,FCustId.FNumber,FCustId.FName,FStockID.FName,FStockID.FNumber,FLot.FNumber,FStockID.FIsOpenLocation,FMaterialId.FIsBatchManage,F_TLWD_Text,F_VBMY_Text,F_VBMY_Text1,FTaxPrice,FEntryTaxRate,FSettleCurrId.FNumber,FSaleDeptId.FNumber';
     Map<String, dynamic> dataMap = Map();
     dataMap['data'] = userMap;
     String order = await CurrencyEntity.polling(dataMap);
@@ -972,6 +972,7 @@ class _RetrievalDetailState extends State<RetrievalDetail> {
         Model['FStockOrgId'] = {"FNumber": orderDate[0][1].toString()};
         Model['FSaleOrgId'] = {"FNumber": orderDate[0][1].toString()};
         Model['FCustomerID'] = {"FNumber": orderDate[0][16].toString()};
+        Model['FSaleDeptID '] = {"FNumber": orderDate[0][29].toString()};
         /* Model['F_TLWD_Text'] = orderDate[0][23];
         Model['F_VBMY_Text '] = orderDate[0][24];
         Model['F_VBMY_Text1'] = orderDate[0][25];*/
@@ -1011,8 +1012,8 @@ class _RetrievalDetailState extends State<RetrievalDetail> {
           FEntityItem['FRealQty'] = element[8]['value']['value'];
           FEntityItem['FEntity_Link'] = [
             {
-              "FEntity_Link_FRuleId": "DeliveryNotice-OutStock",
-              "FEntity_Link_FSTableName": "T_SAL_DELIVERYNOTICEENTRY",
+              "FEntity_Link_FRuleId": "SaleOrder-OutStock",
+              "FEntity_Link_FSTableName": "T_SAL_ORDERENTRY",
               "FEntity_Link_FSBillId": orderDate[hobbyIndex][15],
               "FEntity_Link_FSId": orderDate[hobbyIndex][4],
               "FEntity_Link_FSALBASEQTY": element[8]['value']['value']
@@ -1028,6 +1029,9 @@ class _RetrievalDetailState extends State<RetrievalDetail> {
         return;
       }
       Model['FEntity'] = FEntity;
+      Model['SubHeadEntity'] = {
+        'FSettleCurrID': {"FNumber": orderDate[0][28]}
+      };
       orderMap['Model'] = Model;
       dataMap['data'] = orderMap;
       print(jsonEncode(dataMap));

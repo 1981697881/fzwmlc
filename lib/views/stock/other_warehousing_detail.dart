@@ -35,6 +35,7 @@ class _OtherWarehousingDetailState extends State<OtherWarehousingDetail> {
   var F_VBMY_Text1= '';
   var F_VBMY_Text2= '';
   var F_VBMY_Text3= '';
+  var F_VBMY_Text5= '';
   GlobalKey<TextWidgetState> textKey = GlobalKey();
   GlobalKey<PartRefreshWidgetState> globalKey = GlobalKey();
 
@@ -315,6 +316,14 @@ class _OtherWarehousingDetailState extends State<OtherWarehousingDetail> {
         } else {
           ToastUtil.showInfo('该标签格式不正确');
         }
+        break;
+      case 'F_VBMY_Text5':
+        this._textNumber.text = _code;
+        setState(() {
+          this.F_VBMY_Text5 =  _code;
+        });
+        Navigator.pop(context);
+        checkItem = "";
         break;
       case 'Batch':
         this._textNumber.text = _code;
@@ -899,6 +908,8 @@ class _OtherWarehousingDetailState extends State<OtherWarehousingDetail> {
                               F_VBMY_Text2 = _FNumber;
                             }else if(checkItem == "F_VBMY_Text3"){
                               F_VBMY_Text3 = _FNumber;
+                            }else if(checkItem == "F_VBMY_Text5"){
+                              F_VBMY_Text5 = _FNumber;
                             }else{
                               this.hobby[checkData][checkDataChild]["value"]
                               ["label"] = _FNumber;
@@ -960,6 +971,7 @@ class _OtherWarehousingDetailState extends State<OtherWarehousingDetail> {
       Model['F_VBMY_Text3'] = this.F_VBMY_Text1;
       Model['F_VBMY_Text'] = this.F_VBMY_Text2;
       Model['F_VBMY_Text1'] = this.F_VBMY_Text3;
+      Model['F_VBMY_Text5'] = this.F_VBMY_Text5;
       Model['FNOTE'] = this._remarkContent.text;
       var FEntity = [];
       var hobbyIndex = 0;
@@ -1120,6 +1132,31 @@ class _OtherWarehousingDetailState extends State<OtherWarehousingDetail> {
                                       text:
                                       F_VBMY_Text3,
                                     );
+                                    scanDialog();
+                                  },
+                                ),
+                              ])),
+                    ),
+                    divider,
+                  ]),
+                  Column(children: [
+                    Container(
+                      color: Colors.white,
+                      child: ListTile(
+                          title: Text("运单号：$F_VBMY_Text5"),
+                          trailing: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: <Widget>[
+                                IconButton(
+                                  icon: new Icon(Icons.create),
+                                  tooltip: '输入',
+                                  onPressed: () {
+                                    checkItem = 'F_VBMY_Text5';
+                                    this._textNumber.clear();
+                                    this._textNumber.value =
+                                        _textNumber.value.copyWith(
+                                          text: F_VBMY_Text5,
+                                        );
                                     scanDialog();
                                   },
                                 ),
